@@ -60,9 +60,9 @@ public class WorldWeatherOnlineStrategy extends Strategy {
                     String tmpWind;
                     // Translate the wind direction to ukrainian or russian
                     if (isUa) {
-                        tmpWind = dataString.get(8).text().replaceAll("S", "Ïä").replaceAll("N", "Ïí").replaceAll("W", "Ç").replaceAll("E", "Ñ");
+                        tmpWind = dataString.get(8).text().replaceAll("S", "ÐŸÐ´").replaceAll("N", "ÐŸÐ½").replaceAll("W", "Ð—").replaceAll("E", "Ð¡");
                     } else {
-                        tmpWind = dataString.get(8).text().replaceAll("S", "Þ").replaceAll("N", "Ñ").replaceAll("W", "Ç").replaceAll("E", "Â");
+                        tmpWind = dataString.get(8).text().replaceAll("S", "Ð®").replaceAll("N", "Ð¡").replaceAll("W", "Ð—").replaceAll("E", "Ð’");
                     }
                     tmpWeather.setWind(new Wind(Math.round(Double.parseDouble(dataString.get(7).text().split(" ")[0]) * 0.44704 * 10) / 10.0, tmpWind));
 

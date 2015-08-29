@@ -1,8 +1,8 @@
 package com.bikmop.weather_checker.weather;
 
-
 import java.util.Date;
 
+/** Weather parameters */
 public class Weather {
 
     /** Geographical location of the weather */

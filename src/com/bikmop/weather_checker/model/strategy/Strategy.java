@@ -7,7 +7,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
-/** Interface for Strategy pattern to get weather forecast from different sources */
+/** Abstract class for Strategy pattern to get weather forecast from different sources */
 public abstract class Strategy {
 
     /** Map<Integer, Weather>:
@@ -44,6 +44,7 @@ public abstract class Strategy {
                     }
                 } catch (IOException ignore) {
                     // TODO - add to log
+
                 }
 
             } catch (MalformedURLException ignore) {

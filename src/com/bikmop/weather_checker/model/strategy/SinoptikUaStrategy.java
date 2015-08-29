@@ -55,9 +55,9 @@ public class SinoptikUaStrategy extends Strategy {
                 if (tmpElements.size() != 0) {
                     Weather tmpWeather = new Weather(place, new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * shiftDays)));
                     if (isUa) {
-                        tmpWeather.setUrl(String.format(URL_FORMAT_UA, "погода-" + place, dateStr));
+                        tmpWeather.setUrl(String.format(URL_FORMAT_UA, "РїРѕРіРѕРґР°-" + place, dateStr));
                     } else {
-                        tmpWeather.setUrl(String.format(URL_FORMAT, "погода-" + place, dateStr));
+                        tmpWeather.setUrl(String.format(URL_FORMAT, "РїРѕРіРѕРґР°-" + place, dateStr));
                     }
 
                     String tmpURL = tmpElements.get(1).getElementsByAttributeValueStarting("class", "weatherImg").get(0).attr("src");
@@ -109,9 +109,9 @@ public class SinoptikUaStrategy extends Strategy {
     protected Document getDocument(String place, String yyyyMMDD, boolean isUa) throws IOException {
         Connection connection;
         if (isUa) {
-            connection = Jsoup.connect(String.format(URL_FORMAT_UA, URLEncoder.encode("погода-" + place, "UTF-8"), yyyyMMDD));
+            connection = Jsoup.connect(String.format(URL_FORMAT_UA, URLEncoder.encode("РїРѕРіРѕРґР°-" + place, "UTF-8"), yyyyMMDD));
         } else {
-            connection = Jsoup.connect(String.format(URL_FORMAT, URLEncoder.encode("погода-" + place, "UTF-8"), yyyyMMDD));
+            connection = Jsoup.connect(String.format(URL_FORMAT, URLEncoder.encode("РїРѕРіРѕРґР°-" + place, "UTF-8"), yyyyMMDD));
         }
         connection.userAgent("Mozilla/5.0 (Windows NT 6.1; rv:38.0) Gecko/20100101 Firefox/38.0");
         connection.referrer("https://www.google.com.ua/");
