@@ -1,4 +1,4 @@
-package com.bikmop.weather_checker.model.weather;
+package com.bikmop.weather_checker.weather;
 
 /** Class to describe the parameters of precipitation */
 public class Precipitation {

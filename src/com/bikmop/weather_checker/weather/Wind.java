@@ -1,4 +1,4 @@
-package com.bikmop.weather_checker.model.weather;
+package com.bikmop.weather_checker.weather;
 
 /** Class to describe the wind parameters */
 public class Wind {
