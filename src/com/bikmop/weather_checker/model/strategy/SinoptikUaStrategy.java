@@ -101,6 +101,8 @@ public class SinoptikUaStrategy extends Strategy {
 
                     String[] timeStr = tmpElements.get(0).getElementsByAttributeValueStarting("class", "p" + i).text().split(":");
 
+                    tmpWeather.setIconProviderFilePath("resources/sinoptik/sinoptik.gif");
+
                     hourlyWeather.put(Integer.parseInt(timeStr[0]), tmpWeather);
                 } else {
                     isData = false;

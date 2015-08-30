@@ -25,6 +25,8 @@ public class Weather {
     private Precipitation precipitation;
     /** URL-string with current weather forecast */
     private String url;
+    /** String path to icon of weather provider */
+    private String iconProviderFilePath;
 
 
     /** Constructor */
@@ -115,27 +117,36 @@ public class Weather {
         this.url = url;
     }
 
+    public String getIconProviderFilePath() {
+        return iconProviderFilePath;
+    }
+
+    public void setIconProviderFilePath(String iconProviderFilePath) {
+        this.iconProviderFilePath = iconProviderFilePath;
+    }
+
     /** Standard generated equals() and hashCode() */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Weather)) return false;
 
         Weather weather = (Weather) o;
 
-        if (humidity != weather.humidity) return false;
-        if (pressure != weather.pressure) return false;
-        if (tempFeel != weather.tempFeel) return false;
         if (temperature != weather.temperature) return false;
+        if (tempFeel != weather.tempFeel) return false;
+        if (pressure != weather.pressure) return false;
+        if (humidity != weather.humidity) return false;
+        if (location != null ? !location.equals(weather.location) : weather.location != null) return false;
         if (dateTime != null ? !dateTime.equals(weather.dateTime) : weather.dateTime != null) return false;
         if (pictureWeather != null ? !pictureWeather.equals(weather.pictureWeather) : weather.pictureWeather != null)
             return false;
-        if (location != null ? !location.equals(weather.location) : weather.location != null) return false;
+        if (wind != null ? !wind.equals(weather.wind) : weather.wind != null) return false;
         if (precipitation != null ? !precipitation.equals(weather.precipitation) : weather.precipitation != null)
             return false;
-        if (wind != null ? !wind.equals(weather.wind) : weather.wind != null) return false;
+        if (url != null ? !url.equals(weather.url) : weather.url != null) return false;
+        return !(iconProviderFilePath != null ? !iconProviderFilePath.equals(weather.iconProviderFilePath) : weather.iconProviderFilePath != null);
 
-        return true;
     }
 
     @Override
@@ -149,8 +160,8 @@ public class Weather {
         result = 31 * result + humidity;
         result = 31 * result + (wind != null ? wind.hashCode() : 0);
         result = 31 * result + (precipitation != null ? precipitation.hashCode() : 0);
+        result = 31 * result + (url != null ? url.hashCode() : 0);
+        result = 31 * result + (iconProviderFilePath != null ? iconProviderFilePath.hashCode() : 0);
         return result;
     }
-
-
 }

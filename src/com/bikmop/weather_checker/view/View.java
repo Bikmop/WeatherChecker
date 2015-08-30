@@ -1,4 +1,5 @@
 package com.bikmop.weather_checker.view;
 
-public class View {
+/** View-interface of Model-View-Controller pattern */
+public interface View {
 }

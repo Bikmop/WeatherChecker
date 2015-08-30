@@ -77,6 +77,8 @@ public class WorldWeatherOnlineStrategy extends Strategy {
                     tmpWeather.setPictureWeather(new PictureWeather(dataString.get(1).getAllElements().get(1).attr("title"),
                             "resources/wwo/" + tmpPartsURL[tmpPartsURL.length - 1]));
 
+                    tmpWeather.setIconProviderFilePath("resources/wwo/wwo.gif");
+
                     hourlyWeather.put(Integer.parseInt(dataString.get(0).text().split(":")[0]), tmpWeather);
                 }
 

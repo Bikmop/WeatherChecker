@@ -30,6 +30,7 @@ public class GismeteoUaStrategy extends Strategy {
     private static final String URL_FORMAT_UA = "http://www.gismeteo.ua/ua/weather-%s/%shourly/";
 
 
+
     @Override
     /** Get hourly weather forecast using Jsoup */
     public Map<Integer, Weather> getHourlyWeather(Location location, int shiftDays, boolean isUa) {
@@ -105,6 +106,8 @@ public class GismeteoUaStrategy extends Strategy {
                 tmpWeather.setHumidity(Integer.parseInt(tdTags.get(5).text()));
 
                 String[] timeStr = elements.get(i).getElementsByAttributeValueStarting("class", "wrow").attr("id").split("-");
+
+                tmpWeather.setIconProviderFilePath("resources/gismeteo/gismeteo.gif");
 
                 hourlyWeather.put(Integer.parseInt(timeStr[timeStr.length - 1]), tmpWeather);
 
