@@ -1,5 +1,9 @@
 package com.bikmop.weather_checker.weather;
 
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
 /** Geographical location with parameters for weather providers */
 public class Location {
     // Ukrainian name of location
@@ -44,5 +48,54 @@ public class Location {
 
     public String getWwo() {
         return wwo;
+    }
+
+    /** Static method to get locations from file on disk */
+    public static List<Location> getLocations(String fileName) {
+        List<Location> locations = new ArrayList<>();
+        try ( BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "UTF8"))) {
+
+            String nameUa = "";
+            String nameRu = "";
+            String sinoptikUa = "";
+            String sinoptikRu = "";
+            String gismeteo = "";
+            int i = 0;
+            while (reader.ready()) {
+                String tmpStr = reader.readLine().trim();
+
+                switch (i) {
+                    case 0 :
+                        nameUa = tmpStr;
+                        break;
+                    case 1 :
+                        nameRu = tmpStr;
+                        break;
+                    case 2 :
+                        sinoptikUa = tmpStr;
+                        break;
+                    case 3 :
+                        sinoptikRu = tmpStr;
+                        break;
+                    case 4 :
+                        gismeteo = tmpStr;
+                        break;
+                    case 5 :
+                        locations.add(new Location(nameUa, nameRu, sinoptikUa, sinoptikRu, gismeteo, tmpStr));
+                        i = -1;
+                        nameUa = "";
+                        nameRu = "";
+                        sinoptikUa = "";
+                        sinoptikRu = "";
+                        gismeteo = "";
+                        break;
+                }
+
+                i++;
+            }
+        } catch (IOException e) {
+            // TODO - add to log
+        }
+        return locations;
     }
 }
