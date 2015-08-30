@@ -1,5 +1,6 @@
 package com.bikmop.weather_checker.model.strategy;
 
+import com.bikmop.weather_checker.weather.Location;
 import com.bikmop.weather_checker.weather.Weather;
 
 import java.io.*;
@@ -13,11 +14,11 @@ public abstract class Strategy {
     /** Map<Integer, Weather>:
      * Integer: hour of weather forecast (0, 3, 6, ...)
      *
-     * String place:  part of URL which is different for each geographical location
+     * Location location:  geographical location
      * int shiftDays:  0 - today forecast, 1 - tomorrow, etc.
      * boolean isUa:  if use ukrainian language and site parameters
      * */
-    public abstract Map<Integer, Weather> getHourlyWeather(String place, int shiftDays, boolean isUa);
+    public abstract Map<Integer, Weather> getHourlyWeather(Location location, int shiftDays, boolean isUa);
 
 
     /** Save weather image to file on disk if it does not exists.

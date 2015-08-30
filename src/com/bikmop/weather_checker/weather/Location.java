@@ -1,4 +1,4 @@
-package com.bikmop.weather_checker.model;
+package com.bikmop.weather_checker.weather;
 
 /** Geographical location with parameters for weather providers */
 public class Location {
@@ -6,7 +6,7 @@ public class Location {
     String nameUa;
     // Russian name of location
     String nameRu;
-    // Location strings for providers
+    // Location strings for providers (part of URL which is different for each geographical location)
     String sinoptikUa;
     String sinoptikRu;
     String gismeteo;

@@ -1,5 +1,6 @@
 package com.bikmop.weather_checker.model.strategy;
 
+import com.bikmop.weather_checker.weather.Location;
 import com.bikmop.weather_checker.weather.PictureWeather;
 import com.bikmop.weather_checker.weather.Precipitation;
 import com.bikmop.weather_checker.weather.Weather;
@@ -29,11 +30,19 @@ public class SinoptikUaStrategy extends Strategy {
 
     @Override
     /** Get hourly weather forecast using Jsoup */
-    public Map<Integer, Weather> getHourlyWeather(String place, int shiftDays, boolean isUa) {
+    public Map<Integer, Weather> getHourlyWeather(Location location, int shiftDays, boolean isUa) {
 
         Map<Integer, Weather> hourlyWeather = new TreeMap<>();
 
         try {
+
+            // Get necessary part of URL (location string). Example: %D0%BA%D0%B8%D0%B5%D0%B2 - cyrillic symbols
+            String place;
+            if (isUa) {
+                place = location.getSinoptikUa();
+            } else {
+                place = location.getSinoptikRu();
+            }
 
             // Convert shiftDays to necessary string
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -53,7 +62,7 @@ public class SinoptikUaStrategy extends Strategy {
                 i++;
                 Elements tmpElements = element.get(0).getElementsByAttributeValueStarting("class", "p" + i);
                 if (tmpElements.size() != 0) {
-                    Weather tmpWeather = new Weather(place, new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * shiftDays)));
+                    Weather tmpWeather = new Weather(location, new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * shiftDays)));
                     if (isUa) {
                         tmpWeather.setUrl(String.format(URL_FORMAT_UA, "погода-" + place, dateStr));
                     } else {

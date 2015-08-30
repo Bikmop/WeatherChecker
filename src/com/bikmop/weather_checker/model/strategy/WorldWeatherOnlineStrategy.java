@@ -1,5 +1,6 @@
 package com.bikmop.weather_checker.model.strategy;
 
+import com.bikmop.weather_checker.weather.Location;
 import com.bikmop.weather_checker.weather.PictureWeather;
 import com.bikmop.weather_checker.weather.Precipitation;
 import com.bikmop.weather_checker.weather.Weather;
@@ -26,12 +27,15 @@ public class WorldWeatherOnlineStrategy extends Strategy {
 
     @Override
     /** Get hourly weather forecast using Jsoup */
-    public Map<Integer, Weather> getHourlyWeather(String place, int shiftDays, boolean isUa) {
+    public Map<Integer, Weather> getHourlyWeather(Location location, int shiftDays, boolean isUa) {
 
         Map<Integer, Weather> hourlyWeather = new TreeMap<>();
 
         if (shiftDays >= 0 && shiftDays < 7) {
             try {
+
+                // Get necessary part of URL (location string). Example: Chernihiv-weather/Chernihivska-Oblast/UA
+                String place = location.getWwo();
 
                 // Get HTML and fill resultant map with parsed data
                 Document document = getDocument(place);
@@ -39,7 +43,7 @@ public class WorldWeatherOnlineStrategy extends Strategy {
                 Elements eachHourDataString = elements.get(shiftDays).getElementsByTag("ul");
 
                 for (int i = 3; i < eachHourDataString.size(); i++) {
-                    Weather tmpWeather = new Weather(place, new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * shiftDays)));
+                    Weather tmpWeather = new Weather(location, new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * shiftDays)));
 
                     tmpWeather.setUrl(String.format(URL_FORMAT, place));
 

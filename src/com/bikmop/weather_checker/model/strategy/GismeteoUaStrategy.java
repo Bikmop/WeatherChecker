@@ -1,5 +1,6 @@
 package com.bikmop.weather_checker.model.strategy;
 
+import com.bikmop.weather_checker.weather.Location;
 import com.bikmop.weather_checker.weather.PictureWeather;
 import com.bikmop.weather_checker.weather.Weather;
 import com.bikmop.weather_checker.weather.Wind;
@@ -31,11 +32,14 @@ public class GismeteoUaStrategy extends Strategy {
 
     @Override
     /** Get hourly weather forecast using Jsoup */
-    public Map<Integer, Weather> getHourlyWeather(String place, int shiftDays, boolean isUa) {
+    public Map<Integer, Weather> getHourlyWeather(Location location, int shiftDays, boolean isUa) {
 
         Map<Integer, Weather> hourlyWeather = new TreeMap<>();
 
         try {
+
+            // Get necessary part of URL (location string). Example: chernihiv-4923
+            String place = location.getGismeteo();
 
             // Convert shiftDays to necessary string
             String shiftStr = null;
@@ -72,7 +76,7 @@ public class GismeteoUaStrategy extends Strategy {
             Elements elements = document.getElementsByAttributeValueStarting("id", "wrow-" + dateStr);
 
             for (int i = 0; i < elements.size(); i++) {
-                Weather tmpWeather = new Weather(place, new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * shiftDays)));
+                Weather tmpWeather = new Weather(location, new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * shiftDays)));
 
                 if (isUa) {
                     tmpWeather.setUrl(String.format(URL_FORMAT_UA, place, shiftStr));

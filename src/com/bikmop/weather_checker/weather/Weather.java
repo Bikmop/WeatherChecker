@@ -6,7 +6,7 @@ import java.util.Date;
 public class Weather {
 
     /** Geographical location of the weather */
-    private String place;
+    private Location location;
     /** Date */
     private Date dateTime;
     /** Temperature in Celsius degrees */
@@ -28,15 +28,15 @@ public class Weather {
 
 
     /** Constructor */
-    public Weather(String place, Date dateTime) {
-        this.place = place;
+    public Weather(Location location, Date dateTime) {
+        this.location = location;
         this.dateTime = dateTime;
     }
 
 
     /** Getters and Setters */
-    public String getPlace() {
-        return place;
+    public Location getLocation() {
+        return location;
     }
 
     public Date getDateTime() {
@@ -71,8 +71,8 @@ public class Weather {
         return precipitation;
     }
 
-    public void setPlace(String place) {
-        this.place = place;
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
     public void setDateTime(Date dateTime) {
@@ -130,7 +130,7 @@ public class Weather {
         if (dateTime != null ? !dateTime.equals(weather.dateTime) : weather.dateTime != null) return false;
         if (pictureWeather != null ? !pictureWeather.equals(weather.pictureWeather) : weather.pictureWeather != null)
             return false;
-        if (place != null ? !place.equals(weather.place) : weather.place != null) return false;
+        if (location != null ? !location.equals(weather.location) : weather.location != null) return false;
         if (precipitation != null ? !precipitation.equals(weather.precipitation) : weather.precipitation != null)
             return false;
         if (wind != null ? !wind.equals(weather.wind) : weather.wind != null) return false;
@@ -140,7 +140,7 @@ public class Weather {
 
     @Override
     public int hashCode() {
-        int result = place != null ? place.hashCode() : 0;
+        int result = location != null ? location.hashCode() : 0;
         result = 31 * result + (dateTime != null ? dateTime.hashCode() : 0);
         result = 31 * result + temperature;
         result = 31 * result + tempFeel;

@@ -2,6 +2,7 @@ package com.bikmop.weather_checker.model;
 
 import com.bikmop.weather_checker.model.strategy.Provider;
 import com.bikmop.weather_checker.view.View;
+import com.bikmop.weather_checker.weather.Location;
 import com.bikmop.weather_checker.weather.Weather;
 
 import java.util.ArrayList;
@@ -30,6 +31,6 @@ public class Model {
 
         }
 
-        view.update();
+//        view.update();
     }
 }
