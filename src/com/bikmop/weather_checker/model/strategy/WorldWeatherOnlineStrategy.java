@@ -20,10 +20,17 @@ public class WorldWeatherOnlineStrategy extends Strategy {
      *  http://www.worldweatheronline.com/Chernihiv-weather/Chernihivska-Oblast/UA.aspx?day=20&tp=1
      *  http://www.worldweatheronline.com/Kiev-weather/Kyyivska-Oblast/UA.aspx?day=20&tp=1
      *  http://www.worldweatheronline.com/Klagenfurt-weather/Karnten/AT.aspx?day=20&tp=1
-    */
+     */
     // URL constant
     private static final String URL_FORMAT = "http://www.worldweatheronline.com/%s.aspx?day=20&tp=1";
 
+    // Directory with resources for current strategy
+    private static final String RESOURCES_DIRECTORY = "resources/wwo/";
+
+    @Override
+    public String getDirectoryPath() {
+        return RESOURCES_DIRECTORY;
+    }
 
     @Override
     /** Get hourly weather forecast using Jsoup */
@@ -73,11 +80,9 @@ public class WorldWeatherOnlineStrategy extends Strategy {
                     String tmpURL = dataString.get(1).getAllElements().get(1).attr("src");
                     String tmpPartsURL[] = tmpURL.split("/");
                     // Save weather image if necessary
-                    saveImage(tmpURL, "resources/wwo/" + tmpPartsURL[tmpPartsURL.length - 1]);
+                    saveImage(tmpURL, RESOURCES_DIRECTORY + tmpPartsURL[tmpPartsURL.length - 1]);
                     tmpWeather.setPictureWeather(new PictureWeather(dataString.get(1).getAllElements().get(1).attr("title"),
-                            "resources/wwo/" + tmpPartsURL[tmpPartsURL.length - 1]));
-
-                    tmpWeather.setIconProviderFilePath("resources/wwo/wwo.gif");
+                            RESOURCES_DIRECTORY + tmpPartsURL[tmpPartsURL.length - 1]));
 
                     hourlyWeather.put(Integer.parseInt(dataString.get(0).text().split(":")[0]), tmpWeather);
                 }

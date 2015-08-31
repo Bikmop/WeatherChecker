@@ -25,8 +25,6 @@ public class Weather {
     private Precipitation precipitation;
     /** URL-string with current weather forecast */
     private String url;
-    /** String path to icon of weather provider */
-    private String iconProviderFilePath;
 
 
     /** Constructor */
@@ -117,51 +115,4 @@ public class Weather {
         this.url = url;
     }
 
-    public String getIconProviderFilePath() {
-        return iconProviderFilePath;
-    }
-
-    public void setIconProviderFilePath(String iconProviderFilePath) {
-        this.iconProviderFilePath = iconProviderFilePath;
-    }
-
-    /** Standard generated equals() and hashCode() */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Weather)) return false;
-
-        Weather weather = (Weather) o;
-
-        if (temperature != weather.temperature) return false;
-        if (tempFeel != weather.tempFeel) return false;
-        if (pressure != weather.pressure) return false;
-        if (humidity != weather.humidity) return false;
-        if (location != null ? !location.equals(weather.location) : weather.location != null) return false;
-        if (dateTime != null ? !dateTime.equals(weather.dateTime) : weather.dateTime != null) return false;
-        if (pictureWeather != null ? !pictureWeather.equals(weather.pictureWeather) : weather.pictureWeather != null)
-            return false;
-        if (wind != null ? !wind.equals(weather.wind) : weather.wind != null) return false;
-        if (precipitation != null ? !precipitation.equals(weather.precipitation) : weather.precipitation != null)
-            return false;
-        if (url != null ? !url.equals(weather.url) : weather.url != null) return false;
-        return !(iconProviderFilePath != null ? !iconProviderFilePath.equals(weather.iconProviderFilePath) : weather.iconProviderFilePath != null);
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = location != null ? location.hashCode() : 0;
-        result = 31 * result + (dateTime != null ? dateTime.hashCode() : 0);
-        result = 31 * result + temperature;
-        result = 31 * result + tempFeel;
-        result = 31 * result + (pictureWeather != null ? pictureWeather.hashCode() : 0);
-        result = 31 * result + pressure;
-        result = 31 * result + humidity;
-        result = 31 * result + (wind != null ? wind.hashCode() : 0);
-        result = 31 * result + (precipitation != null ? precipitation.hashCode() : 0);
-        result = 31 * result + (url != null ? url.hashCode() : 0);
-        result = 31 * result + (iconProviderFilePath != null ? iconProviderFilePath.hashCode() : 0);
-        return result;
-    }
 }

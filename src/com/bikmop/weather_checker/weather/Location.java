@@ -50,7 +50,15 @@ public class Location {
         return wwo;
     }
 
-    /** Static method to get locations from file on disk */
+    /** Static method to get locations from file on disk
+     * Example:
+     * Київ                                     // nameUa
+     * Киев                                     // nameRu
+     * київ                                     // sinoptikUa
+     * киев                                     // sinoptikRu
+     * kyiv-4944                                // gismeteo
+     * Kiev-weather/Kyyivska-Oblast/UA          // wwo
+     */
     public static List<Location> getLocations(String fileName) {
         List<Location> locations = new ArrayList<>();
         try ( BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "UTF8"))) {

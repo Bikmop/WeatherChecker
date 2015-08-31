@@ -29,7 +29,13 @@ public class GismeteoUaStrategy extends Strategy {
     private static final String URL_FORMAT = "http://www.gismeteo.ua/weather-%s/%shourly/";
     private static final String URL_FORMAT_UA = "http://www.gismeteo.ua/ua/weather-%s/%shourly/";
 
+    // Directory with resources for current strategy
+    private static final String RESOURCES_DIRECTORY = "resources/gismeteo/";
 
+    @Override
+    public String getDirectoryPath() {
+        return RESOURCES_DIRECTORY;
+    }
 
     @Override
     /** Get hourly weather forecast using Jsoup */
@@ -89,9 +95,9 @@ public class GismeteoUaStrategy extends Strategy {
                         get(0).getElementsByTag("img").get(0).attr("src");
                 String tmpPartsURL[] = tmpURL.split("/");
                 // Save weather image if necessary
-                saveImage("http:" + tmpURL, "resources/gismeteo/" + tmpPartsURL[tmpPartsURL.length - 1]);
+                saveImage("http:" + tmpURL, RESOURCES_DIRECTORY + tmpPartsURL[tmpPartsURL.length - 1]);
                 tmpWeather.setPictureWeather(new PictureWeather(elements.get(i).getElementsByAttributeValue("class", "cltext").text(),
-                        "resources/gismeteo/" + tmpPartsURL[tmpPartsURL.length - 1]));
+                        RESOURCES_DIRECTORY + tmpPartsURL[tmpPartsURL.length - 1]));
 
                 Elements temperatures = elements.get(i).getElementsByAttributeValue("class", "value m_temp c");
                 tmpWeather.setTemperature(Integer.parseInt(temperatures.get(0).getElementsByAttributeValue("class", "value m_temp c").text()));
@@ -106,8 +112,6 @@ public class GismeteoUaStrategy extends Strategy {
                 tmpWeather.setHumidity(Integer.parseInt(tdTags.get(5).text()));
 
                 String[] timeStr = elements.get(i).getElementsByAttributeValueStarting("class", "wrow").attr("id").split("-");
-
-                tmpWeather.setIconProviderFilePath("resources/gismeteo/gismeteo.gif");
 
                 hourlyWeather.put(Integer.parseInt(timeStr[timeStr.length - 1]), tmpWeather);
 

@@ -16,4 +16,8 @@ public class Provider {
     public Map<Integer, Weather> getHourlyWeather(Location location, int shiftDays, boolean isUa) {
         return strategy.getHourlyWeather(location, shiftDays, isUa);
     }
+
+    public Strategy getStrategy() {
+        return strategy;
+    }
 }

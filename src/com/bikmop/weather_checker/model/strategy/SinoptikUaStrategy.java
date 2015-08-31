@@ -27,6 +27,13 @@ public class SinoptikUaStrategy extends Strategy {
     private static final String URL_FORMAT = "https://sinoptik.ua/%s/%s";
     private static final String URL_FORMAT_UA = "https://ua.sinoptik.ua/%s/%s";
 
+    // Directory with resources for current strategy
+    private static final String RESOURCES_DIRECTORY = "resources/sinoptik/";
+
+    @Override
+    public String getDirectoryPath() {
+        return RESOURCES_DIRECTORY;
+    }
 
     @Override
     /** Get hourly weather forecast using Jsoup */
@@ -72,9 +79,9 @@ public class SinoptikUaStrategy extends Strategy {
                     String tmpURL = tmpElements.get(1).getElementsByAttributeValueStarting("class", "weatherImg").get(0).attr("src");
                     String tmpPartsURL[] = tmpURL.split("/");
                     // Save weather image if necessary
-                    saveImage("http:" + tmpURL, "resources/sinoptik/" + tmpPartsURL[tmpPartsURL.length - 1]);
+                    saveImage("http:" + tmpURL, RESOURCES_DIRECTORY + tmpPartsURL[tmpPartsURL.length - 1]);
                     tmpWeather.setPictureWeather(new PictureWeather(tmpElements.get(1).getElementsByAttributeValueStarting("class", "weatherIco").get(0).attr("title"),
-                            "resources/sinoptik/" + tmpPartsURL[tmpPartsURL.length - 1]));
+                            RESOURCES_DIRECTORY + tmpPartsURL[tmpPartsURL.length - 1]));
 
                     String tmpStr = tmpElements.get(2).getElementsByAttributeValueStarting("class", "p" + i).text();
                     tmpWeather.setTemperature(Integer.parseInt(tmpStr.substring(0, tmpStr.length() - 1)));
@@ -100,8 +107,6 @@ public class SinoptikUaStrategy extends Strategy {
                     }
 
                     String[] timeStr = tmpElements.get(0).getElementsByAttributeValueStarting("class", "p" + i).text().split(":");
-
-                    tmpWeather.setIconProviderFilePath("resources/sinoptik/sinoptik.gif");
 
                     hourlyWeather.put(Integer.parseInt(timeStr[0]), tmpWeather);
                 } else {

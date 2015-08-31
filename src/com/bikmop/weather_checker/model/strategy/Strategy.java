@@ -11,19 +11,23 @@ import java.util.Map;
 /** Abstract class for Strategy pattern to get weather forecast from different sources */
 public abstract class Strategy {
 
+    // Path to directory with strategy files (weather pictures, etc)
+    public abstract String getDirectoryPath();
+
+
     /** Map<Integer, Weather>:
      * Integer: hour of weather forecast (0, 3, 6, ...)
      *
      * Location location:  geographical location
      * int shiftDays:  0 - today forecast, 1 - tomorrow, etc.
      * boolean isUa:  if use ukrainian language and site parameters
-     * */
+     */
     public abstract Map<Integer, Weather> getHourlyWeather(Location location, int shiftDays, boolean isUa);
 
 
     /** Save weather image to file on disk if it does not exists.
      *  Improving speed of the image displaying, because downloads from the Internet only new images.
-     * */
+     */
     protected static void saveImage(String imageUrl, String destinationFile) {
 
         File file = new File(destinationFile);

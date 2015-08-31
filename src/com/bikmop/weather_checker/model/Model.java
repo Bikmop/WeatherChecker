@@ -15,11 +15,11 @@ public class Model {
 
     private View view;
     // List of weather forecast providers
-    private Provider[] providers;
+    private List<Provider> providers;
 
-    public Model(View view, Provider[] providers) throws IllegalArgumentException
+    public Model(View view, List<Provider> providers) throws IllegalArgumentException
     {
-        if (view == null || providers == null || providers.length == 0)
+        if (view == null || providers == null || providers.size() == 0)
             throw new IllegalArgumentException();
 
         this.view = view;
@@ -30,12 +30,12 @@ public class Model {
     /** Method to refresh View with new data of weather forecasts
      *  Using multithreading - thread pool with own thread for each weather provider
      *  to improve refreshing speed.
-     * */
+     */
     public void refreshWeatherParameters(Location location, int shiftDays, boolean isUa) {
         List<Map<Integer, Weather>> forecasts = new ArrayList<>();
 
         // Create ThreadPool
-        ExecutorService executor = Executors.newFixedThreadPool(providers.length);
+        ExecutorService executor = Executors.newFixedThreadPool(providers.size());
         // List for results
         List<Future<Map<Integer, Weather>>> futureList = new ArrayList<>();
 
@@ -54,7 +54,7 @@ public class Model {
         boolean flag = true;
         while (flag) {
             flag = false;
-            for (int i = 0; i < providers.length; i++) {
+            for (int i = 0; i < providers.size(); i++) {
                 if (!futureList.get(i).isDone()) {
                     flag = true;
                     break;
@@ -68,7 +68,7 @@ public class Model {
         }
 
         // Getting results
-        for (int i = 0; i < providers.length; i++) {
+        for (int i = 0; i < providers.size(); i++) {
             try {
                 forecasts.add(futureList.get(i).get());
             } catch (InterruptedException | ExecutionException e) {
