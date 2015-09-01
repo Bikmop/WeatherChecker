@@ -6,10 +6,11 @@ import com.bikmop.weather_checker.weather.Location;
 import com.bikmop.weather_checker.weather.Weather;
 
 import javax.swing.*;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.ResourceBundle;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.*;
 
 public class SwingFrameView implements View {
     @Override
@@ -46,14 +47,108 @@ public class SwingFrameView implements View {
 
 //        getPlaceList();
 
-        String resources = providers.get(0).getStrategy().getDirectoryPath().replaceAll("/", ".");
-        Properties props = new Properties();
-        ResourceBundle res = ResourceBundle.getBundle("." + resources + "fields_ru");
+/*        Properties props = new Properties();
+        try {
+            String resources = providers.get(0).getStrategy().getDirectoryPath();
+
+            FileOutputStream out = new FileOutputStream(resources + "fields_ua.properties");
+            props.setProperty("temperature", "Температура, ℃:");
+            props.setProperty("feel", "Відчувається, ℃:");
+            props.setProperty("precipitation.probability", "Опади, % ймов.:");
+            props.setProperty("precipitation.description", "Опади, опис:");
+            props.setProperty("wind", "Вітер, м/с:");
+            props.setProperty("humidity", "Вологість, %:");
+            props.setProperty("pressure", "Тиск, мм:");
+            props.store(out, null);
+
+            out.flush();
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+
+
+        // Get fields names for View-frame (from the properties files)
+        List<Properties> props = new ArrayList<>();
+        String resources;
+        String fileName;
+        if (isUa) {
+            fileName = "fields_ua.properties";
+        } else {
+            fileName = "fields_ru.properties";
+        }
+
+        // rowsNumber - total number of rows in the View-table
+        // First three rows - location, date, day of week
+        int rowsNumber = 3;
+        for (Provider provider : providers) {
+            resources = provider.getStrategy().getDirectoryPath();
+
+            try (FileInputStream in = new FileInputStream(resources + fileName)) {
+                Properties properties = new Properties();
+                properties.load(in);
+                props.add(properties);
+                // 2 - Weather picture + blank row
+                rowsNumber += properties.size() + 2;
+
+            } catch (IOException e) {
+                // TODO - add to log
+            }
+        }
+
+
 
         Object[] columnNames = {"", "00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00"};
 
 
-        Object[][] tableData = new Object[][]{ {"", "", "", "", "", "", "", "", ""},
+        Object[][] tableData = new Object[rowsNumber][9];
+        for (int i = 0; i < rowsNumber; i++) {
+            for (int j = 0; j < 9; j++) {
+                tableData[i][j] = "";
+            }
+        }
+        // Times string for View
+        tableData[1][0] = "";
+        tableData[1][1] = "00:00";
+        tableData[1][2] = "03:00";
+        tableData[1][3] = "06:00";
+        tableData[1][4] = "09:00";
+        tableData[1][5] = "12:00";
+        tableData[1][6] = "15:00";
+        tableData[1][7] = "18:00";
+        tableData[1][8] = "21:00";
+
+        // Fill first column with Weather parameter names depends of Provider
+        int currentRaw = 3;
+        for (Properties prop : props) {
+            currentRaw++;
+
+            String currentField = prop.getProperty("temperature");
+            if (currentField != null)
+                tableData[currentRaw++][0] = currentField;
+            currentField = prop.getProperty("feel");
+            if (currentField != null)
+                tableData[currentRaw++][0] = currentField;
+            currentField = prop.getProperty("precipitation.probability");
+            if (currentField != null)
+                tableData[currentRaw++][0] = currentField;
+            currentField = prop.getProperty("precipitation.description");
+            if (currentField != null)
+                tableData[currentRaw++][0] = currentField;
+            currentField = prop.getProperty("wind");
+            if (currentField != null)
+                tableData[currentRaw++][0] = currentField;
+            currentField = prop.getProperty("humidity");
+            if (currentField != null)
+                tableData[currentRaw++][0] = currentField;
+            currentField = prop.getProperty("pressure");
+            if (currentField != null)
+                tableData[currentRaw++][0] = currentField;
+            currentRaw++;
+        }
+
+
+/*        Object[][] tableData2 = new Object[][]{ {"", "", "", "", "", "", "", "", ""},
                 {"", "00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00"},
                 {"", "", "", "", "", "", "", "", ""},
                 {"", "", "", "", "", "", "", "", ""},
@@ -82,25 +177,26 @@ public class SwingFrameView implements View {
                 {"Вітер, м/с:", "", "", "", "", "", "", "", ""},
                 {"Вологість, %:", "", "", "", "", "", "", "", ""},
                 {"Тиск, мм:", "", "", "", "", "", "", "", ""},
-                {"", "", "", "", "", "", "", "", "",} };
+                {"", "", "", "", "", "", "", "", "",} };*/
 
 
+        System.out.println();
 
-//        /*JTable table = new JTable(new RssFeedTableModel());
-//table.setShowGrid(false);
-//table.setIntercellSpacing(new Dimension(0, 0));
-//table.setRowHeight(30);
-//table.setTableHeader(null);*/
-//
-//
-///*        JLabel titleLabel = new JLabel("Xakep RSS");
-//        Font titleFont = new Font("Arial", Font.BOLD, 20);
-//        titleLabel.setFont(titleFont);
-//        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-//        titleLabel.setForeground(Color.WHITE);
-//        titleLabel.setPreferredSize(new Dimension(0, 40));
-//        frame.getContentPane().add(titleLabel, BorderLayout.NORTH);*/
-//
+        /*JTable table = new JTable(new RssFeedTableModel());
+table.setShowGrid(false);
+table.setIntercellSpacing(new Dimension(0, 0));
+table.setRowHeight(30);
+table.setTableHeader(null);*/
+
+
+/*        JLabel titleLabel = new JLabel("Xakep RSS");
+        Font titleFont = new Font("Arial", Font.BOLD, 20);
+        titleLabel.setFont(titleFont);
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setPreferredSize(new Dimension(0, 40));
+        frame.getContentPane().add(titleLabel, BorderLayout.NORTH);*/
+
 ////        JTable table = new JTable(data, columnNames);
 //        final JTable table2 = new WeatherTable(tableData, columnNames);
 //        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
@@ -335,13 +431,13 @@ public class SwingFrameView implements View {
 ////        frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
 ////        frame.getContentPane().add(scrollPane2, BorderLayout.CENTER);
 ////        frame.setPreferredSize(new Dimension(1100, 500));
-
-        frame.setIconImage(new ImageIcon("resources/icon.png").getImage());
-
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-        frame.setResizable(false);
+//
+//        frame.setIconImage(new ImageIcon("resources/icon.png").getImage());
+//
+//        frame.pack();
+//        frame.setLocationRelativeTo(null);
+//        frame.setVisible(true);
+//        frame.setResizable(false);
     }
 
 
