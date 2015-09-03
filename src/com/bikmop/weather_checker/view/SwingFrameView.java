@@ -19,6 +19,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 
@@ -26,6 +27,8 @@ import java.util.List;
 /** View implementation using Swing and Awt */
 public class SwingFrameView extends JFrame implements View {
 
+    // Controller
+    private Controller controller;
     // Weather providers (to get resources)
     private static List<Provider> providers;
     // Geographical locations for selection
@@ -37,6 +40,8 @@ public class SwingFrameView extends JFrame implements View {
     private static Properties frameText;
     // Path for picture-files
     private static List<String[]> picPath;
+    // JTable of View
+    private static JTable mainTable;
 
 
     @Override
@@ -103,12 +108,12 @@ public class SwingFrameView extends JFrame implements View {
 
     @Override
     public void update(List<Map<Integer, Weather>> forecasts) {
-
+        fillTable(mainTable, forecasts);
     }
 
     @Override
     public void setController(Controller controller) {
-
+        this.controller = controller;
     }
 
 
@@ -355,7 +360,7 @@ public class SwingFrameView extends JFrame implements View {
         }
 
         // Create table and set cells parameters
-        final JTable table = new WeatherTable(tableData, columnNames);
+        JTable table = new WeatherTable(tableData, columnNames);
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
 
@@ -428,11 +433,13 @@ public class SwingFrameView extends JFrame implements View {
         frame.add(table, BorderLayout.PAGE_START);
 
 
+        SwingFrameView.mainTable = table;
+
         // Create panel for request parameters selection
         JPanel bottomPanel = new JPanel();
 
         // Button to select previous day
-        final JButton getPrevDay = new JButton(frameText.getProperty("previous"));
+        JButton getPrevDay = new JButton(frameText.getProperty("previous"));
         getPrevDay.setEnabled(false);
         bottomPanel.add(getPrevDay);
 
@@ -462,7 +469,7 @@ public class SwingFrameView extends JFrame implements View {
         bottomPanel.add(new Label(" "));
 
         // Refresh button
-        final JButton refresh = new JButton(frameText.getProperty("refresh"));
+        JButton refresh = new JButton(frameText.getProperty("refresh"));
         bottomPanel.add(refresh);
 
         // indent label
@@ -478,7 +485,7 @@ public class SwingFrameView extends JFrame implements View {
         bottomPanel.add(new Label(" "));
 
         // Button to select next day
-        final JButton getNextDay = new JButton(frameText.getProperty("next"));
+        JButton getNextDay = new JButton(frameText.getProperty("next"));
         getPrevDay.setEnabled(false);
         bottomPanel.add(getNextDay);
 
@@ -514,5 +521,129 @@ public class SwingFrameView extends JFrame implements View {
 
         return result;
     }
+
+
+    /** Fill JTable with data from List<Map<Integer, Weather>> */
+    private static void fillTable(JTable table, List<Map<Integer, Weather>> forecasts) {
+
+        // Show location and current date
+        Weather weatherTmp = forecasts.get(0).entrySet().iterator().next().getValue();  // Get some Weather from forecast
+        String location;
+        Date day = weatherTmp.getDateTime();
+        if (isUa) {
+            location = weatherTmp.getLocation().getNameUa() + ":";
+            table.setValueAt(new SimpleDateFormat("dd MMMM", new Locale("uk","UA")).format(day), 1, 0);
+            table.setValueAt(new SimpleDateFormat("EEEE", new Locale("uk","UA")).format(day), 2, 0);
+        } else {
+            location = weatherTmp.getLocation().getNameRu() + ":";
+            table.setValueAt(new SimpleDateFormat("dd MMMM", new Locale("ru","RU")).format(day), 1, 0);
+            table.setValueAt(new SimpleDateFormat("EEEE", new Locale("ru","RU")).format(day), 2, 0);
+        }
+        table.setValueAt(location, 0, 0);
+
+        // Feel table
+        int currentRaw = 3;
+        int currentPropertyRawName = 0;
+        for (Map<Integer, Weather> mapTmp : forecasts) {
+            Properties tmpRawName = rowsNames.get(currentPropertyRawName);
+
+            if (tmpRawName.getProperty("picture.height") != null) {
+                currentRaw++;
+            }
+            // Fill all temperatures for current forecast
+            if (tmpRawName.getProperty("temperature") != null) {
+                for (Map.Entry<Integer, Weather> entry : mapTmp.entrySet()) {
+                    int currentColumn = entry.getKey() / 3 + 1;
+                    if (entry.getKey() % 3 ==0) {       // Need to get only 0:00, 3:00, 6:00, 9:00, etc.
+                        int temperature = entry.getValue().getTemperature();
+                        if (temperature > 0) {
+                            table.setValueAt("+" + temperature, currentRaw, currentColumn);
+                        } else {
+                            table.setValueAt(temperature, currentRaw, currentColumn);
+                        }
+                    }
+                }
+                currentRaw++;
+            }
+            // Fill all temperature-feels for current forecast
+            if (tmpRawName.getProperty("feel") != null) {
+                for (Map.Entry<Integer, Weather> entry : mapTmp.entrySet()) {
+                    int currentColumn = entry.getKey() / 3 + 1;
+                    if (entry.getKey() % 3 ==0) {
+                        int feel = entry.getValue().getTempFeel();
+                        if (feel > 0) {
+                            table.setValueAt("+" + feel, currentRaw, currentColumn);
+                        } else {
+                            table.setValueAt(feel, currentRaw, currentColumn);
+                        }
+                    }
+                }
+                currentRaw++;
+            }
+            // Fill all precipitation probabilities for current forecast
+            if (tmpRawName.getProperty("precipitation.probability") != null) {
+                for (Map.Entry<Integer, Weather> entry : mapTmp.entrySet()) {
+                    int currentColumn = entry.getKey() / 3 + 1;
+                    if (entry.getKey() % 3 ==0) {
+                        int precipitationProb = entry.getValue().getPrecipitation().getProbability();
+                        if (precipitationProb != -1000) {
+                            table.setValueAt(precipitationProb, currentRaw, currentColumn);
+                        } else {
+                            table.setValueAt("-", currentRaw, currentColumn);
+                        }
+                    }
+                }
+                currentRaw++;
+            }
+            // Fill all precipitation descriptions for current forecast
+            if (tmpRawName.getProperty("precipitation.description") != null) {
+                for (Map.Entry<Integer, Weather> entry : mapTmp.entrySet()) {
+                    int currentColumn = entry.getKey() / 3 + 1;
+                    if (entry.getKey() % 3 ==0) {
+                        table.setValueAt(entry.getValue().getPrecipitation().getDescription(), currentRaw, currentColumn);
+                    }
+                }
+                currentRaw++;
+            }
+            // Fill all winds for current forecast
+            if (tmpRawName.getProperty("wind") != null) {
+                for (Map.Entry<Integer, Weather> entry : mapTmp.entrySet()) {
+                    int currentColumn = entry.getKey() / 3 + 1;
+                    if (entry.getKey() % 3 ==0) {
+                        table.setValueAt(entry.getValue().getWind().getPower(), currentRaw, currentColumn);
+                    }
+                }
+                currentRaw++;
+            }
+            // Fill all humidity for current forecast
+            if (tmpRawName.getProperty("humidity") != null) {
+                for (Map.Entry<Integer, Weather> entry : mapTmp.entrySet()) {
+                    int currentColumn = entry.getKey() / 3 + 1;
+                    if (entry.getKey() % 3 ==0) {
+                        table.setValueAt(entry.getValue().getHumidity(), currentRaw, currentColumn);
+                    }
+                }
+                currentRaw++;
+            }
+            // Fill all pressures for current forecast
+            if (tmpRawName.getProperty("pressure") != null) {
+                for (Map.Entry<Integer, Weather> entry : mapTmp.entrySet()) {
+                    int currentColumn = entry.getKey() / 3 + 1;
+                    if (entry.getKey() % 3 ==0) {
+                        table.setValueAt(entry.getValue().getPressure(), currentRaw, currentColumn);
+                    }
+                }
+                currentRaw++;
+            }
+            currentRaw++;
+
+
+            currentPropertyRawName++;
+
+        }
+
+    }
+
+
 
 }

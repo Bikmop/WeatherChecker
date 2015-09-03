@@ -76,7 +76,7 @@ public class Model {
             }
         }
 
-//        view.update();
+        view.update(forecasts);
     }
 
 

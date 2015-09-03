@@ -69,6 +69,11 @@ public class Location {
             String sinoptikRu = "";
             String gismeteo = "";
             int i = 0;
+
+            // Skip first symbol
+            if (reader.ready()) {
+                reader.read();
+            }
             while (reader.ready()) {
                 String tmpStr = reader.readLine().trim();
 
