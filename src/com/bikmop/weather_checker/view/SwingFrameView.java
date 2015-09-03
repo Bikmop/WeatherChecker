@@ -22,21 +22,34 @@ import java.net.URISyntaxException;
 import java.util.*;
 import java.util.List;
 
+
+/** View implementation using Swing and Awt */
 public class SwingFrameView extends JFrame implements View {
 
-
+    // Weather providers (to get resources)
     private static List<Provider> providers;
+    // Geographical locations for selection
     private static List<Location> locations;
+    // If Ukrainian language
     private static boolean isUa;
+    // Text for View from properties-files
     private static List<Properties> rowsNames;
     private static Properties frameText;
+    // Path for picture-files
+    private static List<String[]> picPath;
+
 
     @Override
+    /** Initialization - get parameters from files and create GUI-Frame */
     public void init(List<Provider> providers, List<Location> locations, boolean isUa) {
 
         SwingFrameView.providers = providers;
         SwingFrameView.locations = locations;
         SwingFrameView.isUa = isUa;
+
+        // Init weather-pictures path
+        picPath = new ArrayList<>();
+        String[] blanks = {"", "", "", "", "", "", "", ""};
 
         // Get rows names for View-frame (from the properties files)
         List<Properties> props = new ArrayList<>();
@@ -48,6 +61,9 @@ public class SwingFrameView extends JFrame implements View {
             fileName = "fields_ru.properties";
         }
         for (Provider provider : providers) {
+            // Add blank path for weather-pictures
+            picPath.add(blanks);
+
             resources = provider.getStrategy().getDirectoryPath();
 
             try (FileInputStream in = new FileInputStream(resources + fileName)) {
@@ -72,6 +88,8 @@ public class SwingFrameView extends JFrame implements View {
         } catch (IOException e) {
             // TODO - add to log
         }
+        SwingFrameView.frameText = frameText;
+
 
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -83,15 +101,31 @@ public class SwingFrameView extends JFrame implements View {
 
 
 
-    static class WeatherTable extends JTable {
+    @Override
+    public void update(List<Map<Integer, Weather>> forecasts) {
 
-        public boolean isCellEditable(int row, int column){
-            return false;
-        }
+    }
+
+    @Override
+    public void setController(Controller controller) {
+
+    }
+
+
+
+
+    /** Table to display weather forecasts data */
+    static class WeatherTable extends JTable {
 
         public WeatherTable(Object[][] rowData, Object[] columnNames) {
             super(rowData, columnNames);
         }
+
+        // Not editable cells
+        public boolean isCellEditable(int row, int column){
+            return false;
+        }
+
 
 /*        @Override
         public String getToolTipText(MouseEvent event) {
@@ -107,7 +141,7 @@ public class SwingFrameView extends JFrame implements View {
 
 
 
-
+    //** Renderer to set parameters of table cells */
     static class WeatherTableRenderer extends DefaultTableCellRenderer
     {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
@@ -138,68 +172,11 @@ public class SwingFrameView extends JFrame implements View {
                 cellComponent.setFont(new Font("", Font.BOLD, 17));
             }
 
-            int currentRaw = 3;
-            for (Properties prop : rowsNames) {
-                if (prop.getProperty("picture.height") != null)
-                    currentRaw++;
-                // Temperature
-                if (prop.getProperty("temperature") != null && row == currentRaw++ && column > 0)
-                    cellComponent.setFont(new Font("", Font.BOLD, 16));
-                // Feel
-                if (prop.getProperty("feel") != null && row == currentRaw++ && column > 0)
-                    cellComponent.setFont(new Font("", Font.BOLD, 11));
-                // Precipitation probability
-                if (prop.getProperty("precipitation.probability") != null && row == currentRaw++ && column > 0)
-                    cellComponent.setFont(new Font("", Font.ITALIC, 14));
-                // Precipitation description
-                if (prop.getProperty("precipitation.description") != null && row == currentRaw++ && column > 0)
-                    cellComponent.setFont(new Font("", Font.ITALIC, 14));
-                // Wind
-                if (prop.getProperty("wind") != null && row == currentRaw++  && column > 0)
-                    cellComponent.setFont(new Font("", Font.BOLD, 14));
-                if (prop.getProperty("humidity") != null)
-                    currentRaw++;
-                if (prop.getProperty("pressure") != null)
-                    currentRaw++;
-                //Blank rows
-                if (row == currentRaw++ && column > 0)
-                    currentRaw++;
-            }
-
-
             // Background colors
             cellComponent.setBackground(Color.WHITE);
             // Light grey color background for first three rows
             if (row < 3 || column == 0)
                 cellComponent.setBackground(new Color(250, 250, 250));
-
-            currentRaw = 3;
-            for (Properties prop : rowsNames) {
-                if (prop.getProperty("picture.height") != null)
-                    currentRaw++;
-                // Temperature
-                if (prop.getProperty("temperature") != null && row == currentRaw++ && column > 0 && value != "")
-                    cellComponent.setBackground(new Color(240, 255, 240));
-                // Feel
-                if (prop.getProperty("feel") != null && row == currentRaw++ && column > 0 && value != "")
-                    cellComponent.setBackground(new Color(240, 255, 240));
-                // Precipitation probability
-                if (prop.getProperty("precipitation.probability") != null && row == currentRaw++ && column > 0 && value != "")
-                    cellComponent.setBackground(new Color(230, 230, 230));
-                // Precipitation description
-                if (prop.getProperty("precipitation.description") != null && row == currentRaw++ && column > 0 && value != "")
-                    cellComponent.setBackground(new Color(230, 230, 230));
-                if (prop.getProperty("wind") != null)
-                    currentRaw++;
-                if (prop.getProperty("humidity") != null)
-                    currentRaw++;
-                if (prop.getProperty("pressure") != null)
-                    currentRaw++;
-                //Blank rows
-                if (row == currentRaw++ && column > 0)
-                    cellComponent.setBackground(new Color(250, 250, 250));
-            }
-
 
             // Font colors
             cellComponent.setForeground(Color.BLACK);
@@ -214,109 +191,104 @@ public class SwingFrameView extends JFrame implements View {
                 cellComponent.setForeground(new Color(0, 128, 0));
             }
 
-            currentRaw = 3;
+            this.setIcon(null);
+
+
+            // Cells parameters
+            int currentRaw = 3;
+            int providerNumber = 0;
             for (Properties prop : rowsNames) {
-                if (prop.getProperty("picture.height") != null)
-                    currentRaw++;
-                    // Temperature font color
-                if (prop.getProperty("temperature") != null && row == currentRaw++ && column > 0)
+                // Pictures
+                if (prop.getProperty("picture.height") != null && row == currentRaw++) {
+                    if (column == 0)
+                        this.setIcon(new ImageIcon(providers.get(providerNumber).getStrategy().getDirectoryPath() + "provider.gif"));
+                    else
+                        this.setIcon(new ImageIcon(picPath.get(providerNumber)[column - 1]));
+                }
+                // Temperature
+                if (prop.getProperty("temperature") != null && row == currentRaw++ && column > 0 && value != "") {
+                    cellComponent.setFont(new Font("", Font.BOLD, 16));
+                    cellComponent.setBackground(new Color(240, 255, 240));
                     cellComponent.setForeground(new Color(0, 100, 150));
-                if (prop.getProperty("feel") != null)
-                    currentRaw++;
-                if (prop.getProperty("precipitation.probability") != null)
-                    currentRaw++;
-                if (prop.getProperty("precipitation.description") != null)
-                    currentRaw++;
-                if (prop.getProperty("wind") != null && row == currentRaw++  && column > 0)
-                    // Wind color
+                }
+                // Feel
+                if (prop.getProperty("feel") != null && row == currentRaw++ && column > 0 && value != "") {
+                    cellComponent.setFont(new Font("", Font.BOLD, 11));
+                    cellComponent.setBackground(new Color(240, 255, 240));
+                }
+                // Precipitation probability
+                if (prop.getProperty("precipitation.probability") != null && row == currentRaw++ && column > 0 && value != "") {
+                    cellComponent.setFont(new Font("", Font.ITALIC, 14));
+                    cellComponent.setBackground(new Color(230, 230, 230));
+                }
+                // Precipitation description
+                if (prop.getProperty("precipitation.description") != null && row == currentRaw++ && column > 0 && value != "") {
+                    cellComponent.setFont(new Font("", Font.ITALIC, 14));
+                    cellComponent.setBackground(new Color(230, 230, 230));
+                }
+                // Wind
+                if (prop.getProperty("wind") != null && row == currentRaw++  && column > 0) {
+                    cellComponent.setFont(new Font("", Font.BOLD, 14));
                     cellComponent.setForeground(new Color(200, 60, 60));
+                }
                 if (prop.getProperty("humidity") != null)
                     currentRaw++;
                 if (prop.getProperty("pressure") != null)
                     currentRaw++;
-                currentRaw++;
+                //Blank rows
+                if (row == currentRaw++ && column > 0) {
+                    cellComponent.setBackground(new Color(250, 250, 250));
+                }
+                providerNumber++;
             }
-
-
-
-
-            // Pictures of providers and weather
-//            this.setIcon(null);
-//            if (column == 0 && row == 4) {
-//                this.setIcon(new ImageIcon("resources/sinoptik/provider.gif"));
-//            } else if (column == 0 && row == 13) {
-//                this.setIcon(new ImageIcon("resources/gismeteo/provider.gif"));
-//            } else if (column == 0 && row == 21) {
-//                this.setIcon(new ImageIcon("resources/wwo/provider.gif"));
-//            } else if (row == 4 && column > 0) {
-//                this.setIcon(new ImageIcon(sinPicPath[column - 1]));
-//            } else if (row == 13 && column > 0) {
-//                this.setIcon(new ImageIcon(gisPicPath[column - 1]));
-//            } else if (row == 21 && column > 0) {
-//                this.setIcon(new ImageIcon(wwoPicPath[column - 1]));
-//            } else {
-//                this.setIcon(null);
-//            }
 
             return cellComponent;
         }
     }
 
 
-    @Override
-    public void update(List<Map<Integer, Weather>> forecasts) {
-
-    }
-
-    @Override
-    public void setController(Controller controller) {
-
-    }
-
-
-
+    /** Create JFrame for GUI */
     private static void createGUI() {
 
-        String title;
-        if (isUa) {
-            title = "Мультипрогноз погоди";
-        } else {
-            title = "Мультипрогноз погоды";
-        }
-
-        JFrame frame = new JFrame(title);
+        JFrame frame = new JFrame(frameText.getProperty("title"));
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-//        getPlaceList();
 
 /*        Properties props1 = new Properties();
         try {
             String resources = providers.get(0).getStrategy().getDirectoryPath();
 
             FileOutputStream out = new FileOutputStream("resources/frame_ru.properties");
+//            props1.setProperty("title", "Мультипрогноз погоди");
             props1.setProperty("title", "Мультипрогноз погоды");
             props1.setProperty("day", "День:");
-            props1.setProperty("day0", "Сегодня");
+//            props1.setProperty("day0", "Сьогодні");
+            props1.setProperty("day0", " Сегодня");
             props1.setProperty("day1", "Завтра");
             props1.setProperty("day2", "+2");
             props1.setProperty("day3", "+3");
             props1.setProperty("day4", "+4");
             props1.setProperty("day5", "+5");
             props1.setProperty("day6", "+6");
+//            props1.setProperty("location", " Населений пункт:");
             props1.setProperty("location", "Населённый пункт:");
+            props1.setProperty("previous", "<<");
+            props1.setProperty("next", ">>");
+            props1.setProperty("refresh", "↻");
+            props1.setProperty("ua", "UA");
+            props1.setProperty("ru", "RU");
 
 
 
             props1.store(out, null);
-            FileOutputStream out = new FileOutputStream(resources + "fields_ua.properties");
-            props.setProperty("temperature", "Температура, ℃:");
-            props.setProperty("feel", "Відчувається, ℃:");
-            props.setProperty("precipitation.probability", "Опади, % ймов.:");
-            props.setProperty("precipitation.description", "Опади, опис:");
-            props.setProperty("wind", "Вітер, м/с:");
-            props.setProperty("humidity", "Вологість, %:");
-            props.setProperty("pressure", "Тиск, мм:");
-            props.store(out, null);
+//            FileOutputStream out = new FileOutputStream(resources + "fields_ua.properties");
+//            props.setProperty("temperature", "Температура, ℃:");
+//            props.setProperty("feel", "Відчувається, ℃:");
+//            props.setProperty("precipitation.probability", "Опади, % ймов.:");
+//            props.setProperty("precipitation.description", "Опади, опис:");
+//            props.setProperty("wind", "Вітер, м/с:");
+//            props.setProperty("humidity", "Вологість, %:");
+//            props.setProperty("pressure", "Тиск, мм:");
+//            props.store(out, null);
 
             out.flush();
             out.close();
@@ -335,7 +307,7 @@ public class SwingFrameView extends JFrame implements View {
 
         Object[] columnNames = {"", "00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00"};
 
-
+        // Fill default cells data before table creation
         Object[][] tableData = new Object[rowsNumber][9];
         for (int i = 0; i < rowsNumber; i++) {
             for (int j = 0; j < 9; j++) {
@@ -343,7 +315,6 @@ public class SwingFrameView extends JFrame implements View {
             }
         }
         // Times string for View
-//        tableData[1][0] = "";
         tableData[1][1] = "00:00";
         tableData[1][2] = "03:00";
         tableData[1][3] = "06:00";
@@ -383,14 +354,10 @@ public class SwingFrameView extends JFrame implements View {
             currentRaw++;
         }
 
-
+        // Create table and set cells parameters
         final JTable table = new WeatherTable(tableData, columnNames);
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-
-//        table2.setValueAt(sinoptik.get(0).getTemperature().toString(), 1, 1);
-//
-//        getPlaces_ua();
 
         table.getColumnModel().getColumn(0).setCellRenderer(new WeatherTableRenderer());
         table.getColumnModel().getColumn(1).setCellRenderer(new WeatherTableRenderer());
@@ -457,24 +424,95 @@ public class SwingFrameView extends JFrame implements View {
         table.setShowGrid(false);
         table.setShowVerticalLines(true);
 
-
-
+        // Add table to the frame
         frame.add(table, BorderLayout.PAGE_START);
 
-//        System.out.println("⟳");
+
+        // Create panel for request parameters selection
+        JPanel bottomPanel = new JPanel();
+
+        // Button to select previous day
+        final JButton getPrevDay = new JButton(frameText.getProperty("previous"));
+        getPrevDay.setEnabled(false);
+        bottomPanel.add(getPrevDay);
+
+        // Day label
+        bottomPanel.add(new Label("     " + frameText.getProperty("day")));
+
+        // ComboBox for day selection
+        String[] itemsShiftDays = {frameText.getProperty("day0"),
+                frameText.getProperty("day1"),
+                frameText.getProperty("day2"),
+                frameText.getProperty("day3"),
+                frameText.getProperty("day4"),
+                frameText.getProperty("day5"),
+                frameText.getProperty("day6") };
+        JComboBox comboShiftDays = new JComboBox(itemsShiftDays);
+        bottomPanel.add(comboShiftDays);
+
+        // Location label
+        bottomPanel.add(new Label("    " + frameText.getProperty("location")));
+
+        // ComboBox for location selection
+        String[] itemsLocations = getLocations();
+        JComboBox comboLocations = new JComboBox(itemsLocations);
+        bottomPanel.add(comboLocations);
+
+        // indent label
+        bottomPanel.add(new Label(" "));
+
+        // Refresh button
+        final JButton refresh = new JButton(frameText.getProperty("refresh"));
+        bottomPanel.add(refresh);
+
+        // indent label
+        bottomPanel.add(new Label(" "));
+
+        // ComboBox for language selection
+        String[] itemsLanguage = {frameText.getProperty("ua"),
+                frameText.getProperty("ru") };
+        JComboBox comboLanguage = new JComboBox(itemsLanguage);
+        bottomPanel.add(comboLanguage);
+
+        // indent label
+        bottomPanel.add(new Label(" "));
+
+        // Button to select next day
+        final JButton getNextDay = new JButton(frameText.getProperty("next"));
+        getPrevDay.setEnabled(false);
+        bottomPanel.add(getNextDay);
 
 
-//        final JButton getWeather = new JButton("↻");
 
 
 
+        // Add panel to JFrame
+        frame.add(bottomPanel, BorderLayout.AFTER_LAST_LINE);
+
+        // Set icon and other parameters of JFrame
         frame.setIconImage(new ImageIcon("resources/icon.png").getImage());
-
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         frame.setResizable(false);
     }
 
+
+    /** Get locations for  */
+    private static String[] getLocations() {
+        List<String> locs = new ArrayList<>();
+        for (Location location : locations) {
+            if (isUa) {
+                locs.add(location.getNameUa());
+            } else {
+                locs.add(location.getNameRu());
+            }
+        }
+
+        String[] result = new String[locs.size()];
+        result = locs.toArray(result);
+
+        return result;
+    }
 
 }
