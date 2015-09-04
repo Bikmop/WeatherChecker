@@ -42,10 +42,12 @@ public class WeatherChecker {
 
 
         View frame = new SwingFrameView();
+
         frame.init(providers, locations, isUa);
 
         Model model = new Model(new SwingFrameView(), providers);
         model.refreshWeatherParameters(locations.get(0), 0, isUa);
+        frame.setController(new Controller(model));
 
         System.out.println();
 

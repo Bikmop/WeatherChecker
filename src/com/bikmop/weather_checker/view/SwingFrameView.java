@@ -14,8 +14,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -28,7 +26,7 @@ import java.util.List;
 public class SwingFrameView extends JFrame implements View {
 
     // Controller
-    private Controller controller;
+    private static Controller controller;
     // Weather providers (to get resources)
     private static List<Provider> providers;
     // Geographical locations for selection
@@ -175,7 +173,7 @@ public class SwingFrameView extends JFrame implements View {
                 cellComponent.setFont(new Font("", Font.BOLD, 13));
                 if (row == 0) {
                     // Location properties
-                    cellComponent.setFont(new Font("Tahoma", Font.ITALIC + Font.BOLD, 20));
+                    cellComponent.setFont(new Font("Tahoma", Font.ITALIC + Font.BOLD, 18));
                 }
             }
             if (row == 1) {
@@ -441,6 +439,7 @@ public class SwingFrameView extends JFrame implements View {
             currentProp++;
         }
 
+        // Table parameters
         table.setShowGrid(false);
         table.setShowVerticalLines(true);
 
@@ -466,10 +465,6 @@ public class SwingFrameView extends JFrame implements View {
         });
 
 
-
-
-
-
         // Add table to the frame
         frame.add(table, BorderLayout.PAGE_START);
 
@@ -485,7 +480,8 @@ public class SwingFrameView extends JFrame implements View {
         bottomPanel.add(getPrevDay);
 
         // Day label
-        bottomPanel.add(new Label("     " + frameText.getProperty("day")));
+        Label dayLabel = new Label("   " + frameText.getProperty("day"));
+        bottomPanel.add(dayLabel);
 
         // ComboBox for day selection
         String[] itemsShiftDays = {frameText.getProperty("day0"),
@@ -499,7 +495,8 @@ public class SwingFrameView extends JFrame implements View {
         bottomPanel.add(comboShiftDays);
 
         // Location label
-        bottomPanel.add(new Label("    " + frameText.getProperty("location")));
+        Label locationLabel = new Label("  " + frameText.getProperty("location"));
+        bottomPanel.add(locationLabel);
 
         // ComboBox for location selection
         String[] itemsLocations = getLocations();
@@ -513,6 +510,26 @@ public class SwingFrameView extends JFrame implements View {
         JButton refresh = new JButton(frameText.getProperty("refresh"));
         bottomPanel.add(refresh);
 
+        // Action listener for select location ComboBox
+        comboLocations.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                refresh.doClick();
+            }
+        });
+
+        // Action listener for previous day button
+        getPrevDay.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int currentIndex = comboShiftDays.getSelectedIndex();
+                if (currentIndex > 0) {
+                    comboShiftDays.setSelectedIndex(currentIndex - 1);
+                    refresh.doClick();
+                }
+            }
+        });
+
         // indent label
         bottomPanel.add(new Label(" "));
 
@@ -520,6 +537,12 @@ public class SwingFrameView extends JFrame implements View {
         String[] itemsLanguage = {frameText.getProperty("ua"),
                 frameText.getProperty("ru") };
         JComboBox comboLanguage = new JComboBox(itemsLanguage);
+        // Set default state depends on the language
+        if (isUa) {
+            comboLanguage.setSelectedIndex(0);
+        } else {
+            comboLanguage.setSelectedIndex(1);
+        }
         bottomPanel.add(comboLanguage);
 
         // indent label
@@ -529,10 +552,201 @@ public class SwingFrameView extends JFrame implements View {
         JButton getNextDay = new JButton(frameText.getProperty("next"));
         getPrevDay.setEnabled(false);
         bottomPanel.add(getNextDay);
+        // Action listener for next day button
+        getNextDay.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int currentIndex = comboShiftDays.getSelectedIndex();
+                if (currentIndex < 6) {
+                    comboShiftDays.setSelectedIndex(currentIndex + 1);
+                    refresh.doClick();
+                }
+            }
+        });
 
 
+        // Action listener for refresh button
+        refresh.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+                clearTable(table);
+                String locationName = (String) comboLocations.getSelectedItem();
+
+                Location selectedLocation = null;
+                for (Location location : locations) {
+                    if (locationName.equals(location.getNameRu()) || locationName.equals(location.getNameUa())) {
+                        selectedLocation = location;
+                        break;
+                    }
+                }
+                final Location finalLocation = selectedLocation;
+
+                // Disable all controls before getting new data to prevent wrong displaying because of multithreading
+                comboLocations.setEnabled(false);
+                comboShiftDays.setEnabled(false);
+                comboLanguage.setEnabled(false);
+                refresh.setEnabled(false);
+                getPrevDay.setEnabled(false);
+                getNextDay.setEnabled(false);
+
+                // Thread is needed to prevent hangs of frame
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        controller.onParametersChange(finalLocation, comboShiftDays.getSelectedIndex(), isUa);
+
+                        // Enable controls
+                        comboLocations.setEnabled(true);
+                        comboShiftDays.setEnabled(true);
+                        comboLanguage.setEnabled(true);
+                        refresh.setEnabled(true);
+                        if (comboShiftDays.getSelectedIndex() != 0) {
+                            getPrevDay.setEnabled(true);
+                        }
+                        if (comboShiftDays.getSelectedIndex() != 6) {
+                            getNextDay.setEnabled(true);
+                        }
+                    }
+                }).start();
+
+            }
+        });
 
 
+        // Action listener for language ComboBox
+        comboLanguage.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int currentIndex = comboLanguage.getSelectedIndex();
+                isUa = currentIndex == 0;
+
+                // Load and refresh frame text
+                String fileName;
+                if (isUa) {
+                    fileName = "resources/frame_ua.properties";
+                } else {
+                    fileName = "resources/frame_ru.properties";
+                }
+                Properties frameText = new Properties();
+                try (FileInputStream in = new FileInputStream(fileName)) {
+                    frameText.load(in);
+                } catch (IOException e1) {
+                    // TODO - add to log
+                }
+                SwingFrameView.frameText = frameText;
+
+                // Change all labels, buttons, comboboxes and frame-title
+                getNextDay.setText(frameText.getProperty("next"));
+
+                getPrevDay.setText(frameText.getProperty("previous"));
+
+                String[] itemsLanguage = {frameText.getProperty("ua"),
+                        frameText.getProperty("ru")};
+                comboLanguage.setModel(new DefaultComboBoxModel(itemsLanguage));
+                if (isUa) {
+                    comboLanguage.setSelectedIndex(0);
+                } else {
+                    comboLanguage.setSelectedIndex(1);
+                }
+
+                refresh.setText(frameText.getProperty("refresh"));
+
+                locationLabel.setText("  " + frameText.getProperty("location"));
+
+                int index = comboShiftDays.getSelectedIndex();
+                String[] itemsShiftDays = {frameText.getProperty("day0"),
+                        frameText.getProperty("day1"),
+                        frameText.getProperty("day2"),
+                        frameText.getProperty("day3"),
+                        frameText.getProperty("day4"),
+                        frameText.getProperty("day5"),
+                        frameText.getProperty("day6")};
+                comboShiftDays.setModel(new DefaultComboBoxModel(itemsShiftDays));
+                comboShiftDays.setSelectedIndex(index);
+
+                dayLabel.setText("   " + frameText.getProperty("day"));
+
+                frame.setTitle(frameText.getProperty("title"));
+
+                index = comboLocations.getSelectedIndex();
+                String[] itemsLocations = getLocations();
+                comboLocations.setModel(new DefaultComboBoxModel(itemsLocations));
+                comboLocations.setSelectedIndex(index);
+
+
+                // Refresh rows names for View-frame (from the properties files)
+                List<Properties> props = new ArrayList<>();
+                String resources;
+                if (isUa) {
+                    fileName = "fields_ua.properties";
+                } else {
+                    fileName = "fields_ru.properties";
+                }
+                for (Provider provider : providers) {
+                    resources = provider.getStrategy().getDirectoryPath();
+
+                    try (FileInputStream in = new FileInputStream(resources + fileName)) {
+                        Properties properties = new Properties();
+                        properties.load(in);
+                        props.add(properties);
+                    } catch (IOException ioe) {
+                        // TODO - add to log
+                    }
+                }
+                rowsNames = props;
+                int currentRaw = 3;
+                for (Properties prop : rowsNames) {
+                    String currentField = prop.getProperty("picture.height");
+                    if (currentField != null)
+                        currentRaw++;
+                    currentField = prop.getProperty("temperature");
+                    if (currentField != null)
+                        tableData[currentRaw++][0] = currentField;
+                    currentField = prop.getProperty("feel");
+                    if (currentField != null)
+                        tableData[currentRaw++][0] = currentField;
+                    currentField = prop.getProperty("precipitation.probability");
+                    if (currentField != null)
+                        tableData[currentRaw++][0] = currentField;
+                    currentField = prop.getProperty("precipitation.description");
+                    if (currentField != null)
+                        tableData[currentRaw++][0] = currentField;
+                    currentField = prop.getProperty("wind");
+                    if (currentField != null)
+                        tableData[currentRaw++][0] = currentField;
+                    currentField = prop.getProperty("humidity");
+                    if (currentField != null)
+                        tableData[currentRaw++][0] = currentField;
+                    currentField = prop.getProperty("pressure");
+                    if (currentField != null)
+                        tableData[currentRaw++][0] = currentField;
+                    currentRaw++;
+                }
+
+                refresh.doClick();
+            }
+        });
+
+
+        // Action listener for select day ComboBox
+        comboShiftDays.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int currentIndex = comboShiftDays.getSelectedIndex();
+                if (currentIndex == 0) {
+                    getPrevDay.setEnabled(false);
+                } else if (currentIndex == 6) {
+                    getNextDay.setEnabled(false);
+                }
+                if (!getPrevDay.isEnabled() && currentIndex != 0) {
+                    getPrevDay.setEnabled(true);
+                }
+                if (!getNextDay.isEnabled() && currentIndex != 6) {
+                    getNextDay.setEnabled(true);
+                }
+                refresh.doClick();
+            }
+        });
 
         // Add panel to JFrame
         frame.add(bottomPanel, BorderLayout.AFTER_LAST_LINE);
@@ -543,6 +757,7 @@ public class SwingFrameView extends JFrame implements View {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         frame.setResizable(false);
+
     }
 
 
@@ -566,6 +781,7 @@ public class SwingFrameView extends JFrame implements View {
 
     /** Fill JTable with data from List<Map<Integer, Weather>> */
     private static void fillTable(JTable table, List<Map<Integer, Weather>> forecasts) {
+
 
         // Show location and current date
         Weather weatherTmp = forecasts.get(0).entrySet().iterator().next().getValue();  // Get some Weather from forecast
@@ -688,12 +904,31 @@ public class SwingFrameView extends JFrame implements View {
             }
             currentRaw++;
 
-
             currentPropertyRawName++;
-
         }
     }
 
 
+    /** Clear JTable from forecasts data */
+    private static void clearTable(JTable table) {
+        for (int i = 1; i < table.getColumnCount(); i++) {
+            for (int j = 2; j < table.getRowCount(); j++) {
+                table.setValueAt("", j, i);
+                toolTipText[j][i] = null;
+            }
+        }
+
+        for (String[] strArray : picPath) {
+            for (int i = 0; i < strArray.length; i++) {
+                strArray[i] = "";
+            }
+        }
+
+        table.setValueAt("", 0, 0);
+        table.setValueAt("", 1, 0);
+        table.setValueAt("", 2, 0);
+
+        clickedLinks.clear();
+    }
 
 }
