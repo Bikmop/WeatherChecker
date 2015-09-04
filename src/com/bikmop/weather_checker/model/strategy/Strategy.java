@@ -14,6 +14,9 @@ public abstract class Strategy {
     // Path to directory with strategy files (weather pictures, etc)
     public abstract String getDirectoryPath();
 
+    // Main page of the Strategy weather-forecast
+    public abstract String getDefaultLink();
+
 
     /** Map<Integer, Weather>:
      * Integer: hour of weather forecast (0, 3, 6, ...)

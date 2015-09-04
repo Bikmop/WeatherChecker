@@ -33,6 +33,11 @@ public class WorldWeatherOnlineStrategy extends Strategy {
     }
 
     @Override
+    public String getDefaultLink() {
+        return "http://www.worldweatheronline.com";
+    }
+
+    @Override
     /** Get hourly weather forecast using Jsoup */
     public Map<Integer, Weather> getHourlyWeather(Location location, int shiftDays, boolean isUa) {
 

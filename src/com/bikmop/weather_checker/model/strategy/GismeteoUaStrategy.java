@@ -38,6 +38,11 @@ public class GismeteoUaStrategy extends Strategy {
     }
 
     @Override
+    public String getDefaultLink() {
+        return "http://www.gismeteo.ua/ua";
+    }
+
+    @Override
     /** Get hourly weather forecast using Jsoup */
     public Map<Integer, Weather> getHourlyWeather(Location location, int shiftDays, boolean isUa) {
 

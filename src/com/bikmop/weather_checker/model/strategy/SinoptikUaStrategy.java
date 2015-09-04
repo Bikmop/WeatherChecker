@@ -36,6 +36,11 @@ public class SinoptikUaStrategy extends Strategy {
     }
 
     @Override
+    public String getDefaultLink() {
+        return "https://ua.sinoptik.ua";
+    }
+
+    @Override
     /** Get hourly weather forecast using Jsoup */
     public Map<Integer, Weather> getHourlyWeather(Location location, int shiftDays, boolean isUa) {
 

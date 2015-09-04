@@ -42,6 +42,10 @@ public class SwingFrameView extends JFrame implements View {
     private static List<String[]> picPath;
     // JTable of View
     private static JTable mainTable;
+    // Array for tooltip text
+    private static String[][] toolTipText;
+    // Map to store internet-address and row number to open link when clicked
+    private static Map<Integer, String> clickedLinks = new HashMap<>();
 
 
     @Override
@@ -54,7 +58,6 @@ public class SwingFrameView extends JFrame implements View {
 
         // Init weather-pictures path
         picPath = new ArrayList<>();
-        String[] blanks = {"", "", "", "", "", "", "", ""};
 
         // Get rows names for View-frame (from the properties files)
         List<Properties> props = new ArrayList<>();
@@ -67,7 +70,7 @@ public class SwingFrameView extends JFrame implements View {
         }
         for (Provider provider : providers) {
             // Add blank path for weather-pictures
-            picPath.add(blanks);
+            picPath.add(new String[]{"", "", "", "", "", "", "", ""});
 
             resources = provider.getStrategy().getDirectoryPath();
 
@@ -80,6 +83,17 @@ public class SwingFrameView extends JFrame implements View {
             }
         }
         rowsNames = props;
+
+
+        // rowsNumber - total number of rows in the View-table
+        // First three rows - location, date, day of week
+        int rowsNumber = 3;
+        for (Properties properties : rowsNames) {
+            // + blank row
+            rowsNumber += properties.size() + 1;
+        }
+        toolTipText = new String[rowsNumber][9];
+
 
         // Get another frame text
         if (isUa) {
@@ -132,16 +146,17 @@ public class SwingFrameView extends JFrame implements View {
         }
 
 
-/*        @Override
+        @Override
+        // tooltips handling
         public String getToolTipText(MouseEvent event) {
             String result = "";
             int column = columnAtPoint(event.getPoint());
             int row = rowAtPoint(event.getPoint());
-            if (column != - 1 && row != -1) {
+            if (column != -1 && row != -1) {
                 result = toolTipText[row][column];
             }
             return result;
-        }*/
+        }
     }
 
 
@@ -429,6 +444,32 @@ public class SwingFrameView extends JFrame implements View {
         table.setShowGrid(false);
         table.setShowVerticalLines(true);
 
+        // Open weather-forecast link when weather-picture clicked.
+        table.getSelectionModel().addListSelectionListener(new ListSelectionListener()
+        {
+            public void valueChanged(ListSelectionEvent e)
+            {
+                String[] tmp = e.getSource().toString().split("=");
+                // If only one cell selected - open link in default browser
+                if ((tmp.length > 1) && (table.getSelectedColumn() == 0) && (tmp[tmp.length - 1].split(",").length == 1)) {
+
+                    String urlStr = clickedLinks.get(table.getSelectedRow());
+                    table.clearSelection();
+
+                    if (urlStr != null) {
+                        try {
+                            Desktop.getDesktop().browse(new URI(urlStr));
+                        } catch (IOException | URISyntaxException ignore) {}
+                    }
+                }
+            }
+        });
+
+
+
+
+
+
         // Add table to the frame
         frame.add(table, BorderLayout.PAGE_START);
 
@@ -548,6 +589,15 @@ public class SwingFrameView extends JFrame implements View {
             Properties tmpRawName = rowsNames.get(currentPropertyRawName);
 
             if (tmpRawName.getProperty("picture.height") != null) {
+                for (Map.Entry<Integer, Weather> entry : mapTmp.entrySet()) {
+                    int currentColumn = entry.getKey() / 3 + 1;
+                    if (entry.getKey() % 3 ==0) {
+                        picPath.get(currentPropertyRawName)[currentColumn - 1] =
+                                entry.getValue().getPictureWeather().getWeatherImage();
+                        toolTipText[currentRaw][currentColumn] = entry.getValue().getPictureWeather().getWeatherDescription();
+                        clickedLinks.put(currentRaw, entry.getValue().getUrl());
+                    }
+                }
                 currentRaw++;
             }
             // Fill all temperatures for current forecast
@@ -611,6 +661,7 @@ public class SwingFrameView extends JFrame implements View {
                     int currentColumn = entry.getKey() / 3 + 1;
                     if (entry.getKey() % 3 ==0) {
                         table.setValueAt(entry.getValue().getWind().getPower(), currentRaw, currentColumn);
+                        toolTipText[currentRaw][currentColumn] = entry.getValue().getWind().getDirection();
                     }
                 }
                 currentRaw++;
@@ -641,7 +692,6 @@ public class SwingFrameView extends JFrame implements View {
             currentPropertyRawName++;
 
         }
-
     }
 
 
