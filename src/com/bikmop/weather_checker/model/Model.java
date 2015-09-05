@@ -61,9 +61,9 @@ public class Model {
                 }
             }
             try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                // TODO - add to log
+                Thread.sleep(100);
+            } catch (InterruptedException ignore) {
+                // Ignore, because users do not need messages of the program.
             }
         }
 
@@ -71,8 +71,8 @@ public class Model {
         for (int i = 0; i < providers.size(); i++) {
             try {
                 forecasts.add(futureList.get(i).get());
-            } catch (InterruptedException | ExecutionException e) {
-                // TODO - add to log
+            } catch (InterruptedException | ExecutionException ignore) {
+                // Ignore, because users do not need messages of the program.
             }
         }
 

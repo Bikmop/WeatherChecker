@@ -51,12 +51,12 @@ public abstract class Strategy {
                         os.write(b, 0, length);
                     }
                 } catch (IOException ignore) {
-                    // TODO - add to log
+                    // Ignore, because users do not need messages of the program.
 
                 }
 
             } catch (MalformedURLException ignore) {
-                // TODO - add to log
+                // Ignore, because users do not need messages of the program.
             }
         }
 

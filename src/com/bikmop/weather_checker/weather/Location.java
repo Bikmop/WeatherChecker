@@ -106,8 +106,8 @@ public class Location {
 
                 i++;
             }
-        } catch (IOException e) {
-            // TODO - add to log
+        } catch (IOException ignore) {
+            // Ignore, because users do not need messages of the program.
         }
         return locations;
     }

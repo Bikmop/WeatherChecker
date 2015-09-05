@@ -76,8 +76,8 @@ public class SwingFrameView extends JFrame implements View {
                 Properties properties = new Properties();
                 properties.load(in);
                 props.add(properties);
-            } catch (IOException e) {
-                // TODO - add to log
+            } catch (IOException ignore) {
+                // Ignore, because users do not need messages of the program.
             }
         }
         rowsNames = props;
@@ -102,8 +102,8 @@ public class SwingFrameView extends JFrame implements View {
         Properties frameText = new Properties();
         try (FileInputStream in = new FileInputStream(fileName)) {
             frameText.load(in);
-        } catch (IOException e) {
-            // TODO - add to log
+        } catch (IOException ignore) {
+            // Ignore, because users do not need messages of the program.
         }
         SwingFrameView.frameText = frameText;
 
@@ -114,6 +114,7 @@ public class SwingFrameView extends JFrame implements View {
                 createGUI();
             }
         });
+
     }
 
 
@@ -271,49 +272,6 @@ public class SwingFrameView extends JFrame implements View {
         JFrame frame = new JFrame(frameText.getProperty("title"));
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-/*        Properties props1 = new Properties();
-        try {
-            String resources = providers.get(0).getStrategy().getDirectoryPath();
-
-            FileOutputStream out = new FileOutputStream("resources/frame_ru.properties");
-//            props1.setProperty("title", "Мультипрогноз погоди");
-            props1.setProperty("title", "Мультипрогноз погоды");
-            props1.setProperty("day", "День:");
-//            props1.setProperty("day0", "Сьогодні");
-            props1.setProperty("day0", " Сегодня");
-            props1.setProperty("day1", "Завтра");
-            props1.setProperty("day2", "+2");
-            props1.setProperty("day3", "+3");
-            props1.setProperty("day4", "+4");
-            props1.setProperty("day5", "+5");
-            props1.setProperty("day6", "+6");
-//            props1.setProperty("location", " Населений пункт:");
-            props1.setProperty("location", "Населённый пункт:");
-            props1.setProperty("previous", "<<");
-            props1.setProperty("next", ">>");
-            props1.setProperty("refresh", "↻");
-            props1.setProperty("ua", "UA");
-            props1.setProperty("ru", "RU");
-
-
-
-            props1.store(out, null);
-//            FileOutputStream out = new FileOutputStream(resources + "fields_ua.properties");
-//            props.setProperty("temperature", "Температура, ℃:");
-//            props.setProperty("feel", "Відчувається, ℃:");
-//            props.setProperty("precipitation.probability", "Опади, % ймов.:");
-//            props.setProperty("precipitation.description", "Опади, опис:");
-//            props.setProperty("wind", "Вітер, м/с:");
-//            props.setProperty("humidity", "Вологість, %:");
-//            props.setProperty("pressure", "Тиск, мм:");
-//            props.store(out, null);
-
-            out.flush();
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-
 
         // rowsNumber - total number of rows in the View-table
         // First three rows - location, date, day of week
@@ -409,8 +367,8 @@ public class SwingFrameView extends JFrame implements View {
             int pictureHeight = 0;
             try {
                 pictureHeight = Integer.parseInt(prop.getProperty("picture.height"));
-            } catch (NumberFormatException e) {
-                // TODO - add to log
+            } catch (NumberFormatException ignore) {
+                // Ignore, because users do not need messages of the program.
             }
             table.setRowHeight(currentRaw++, pictureHeight);
 
@@ -630,8 +588,8 @@ public class SwingFrameView extends JFrame implements View {
                 Properties frameText = new Properties();
                 try (FileInputStream in = new FileInputStream(fileName)) {
                     frameText.load(in);
-                } catch (IOException e1) {
-                    // TODO - add to log
+                } catch (IOException ignore) {
+                    // Ignore, because users do not need messages of the program.
                 }
                 SwingFrameView.frameText = frameText;
 
@@ -689,8 +647,8 @@ public class SwingFrameView extends JFrame implements View {
                         Properties properties = new Properties();
                         properties.load(in);
                         props.add(properties);
-                    } catch (IOException ioe) {
-                        // TODO - add to log
+                    } catch (IOException ignore) {
+                        // Ignore, because users do not need messages of the program.
                     }
                 }
                 rowsNames = props;
@@ -757,6 +715,7 @@ public class SwingFrameView extends JFrame implements View {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         frame.setResizable(false);
+        refresh.doClick();
 
     }
 
@@ -784,19 +743,21 @@ public class SwingFrameView extends JFrame implements View {
 
 
         // Show location and current date
-        Weather weatherTmp = forecasts.get(0).entrySet().iterator().next().getValue();  // Get some Weather from forecast
-        String location;
-        Date day = weatherTmp.getDateTime();
-        if (isUa) {
-            location = weatherTmp.getLocation().getNameUa() + ":";
-            table.setValueAt(new SimpleDateFormat("dd MMMM", new Locale("uk","UA")).format(day), 1, 0);
-            table.setValueAt(new SimpleDateFormat("EEEE", new Locale("uk","UA")).format(day), 2, 0);
-        } else {
-            location = weatherTmp.getLocation().getNameRu() + ":";
-            table.setValueAt(new SimpleDateFormat("dd MMMM", new Locale("ru","RU")).format(day), 1, 0);
-            table.setValueAt(new SimpleDateFormat("EEEE", new Locale("ru","RU")).format(day), 2, 0);
+        if (forecasts.get(0).size() > 0) {
+            Weather weatherTmp = forecasts.get(0).entrySet().iterator().next().getValue();  // Get some Weather from forecast
+            String location;
+            Date day = weatherTmp.getDateTime();
+            if (isUa) {
+                location = weatherTmp.getLocation().getNameUa() + ":";
+                table.setValueAt(new SimpleDateFormat("dd MMMM", new Locale("uk","UA")).format(day), 1, 0);
+                table.setValueAt(new SimpleDateFormat("EEEE", new Locale("uk","UA")).format(day), 2, 0);
+            } else {
+                location = weatherTmp.getLocation().getNameRu() + ":";
+                table.setValueAt(new SimpleDateFormat("dd MMMM", new Locale("ru","RU")).format(day), 1, 0);
+                table.setValueAt(new SimpleDateFormat("EEEE", new Locale("ru","RU")).format(day), 2, 0);
+            }
+            table.setValueAt(location, 0, 0);
         }
-        table.setValueAt(location, 0, 0);
 
         // Feel table
         int currentRaw = 3;

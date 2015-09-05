@@ -25,31 +25,13 @@ public class WeatherChecker {
 
     public static void main(String[] args) {
 
-        // Initialize fields of class
+        // Initialize fields of class (get from *.data files)
         init();
 
-
-/*        Map<Integer, Weather> gisForecast = new Provider(new GismeteoUaStrategy())
-                .getHourlyWeather(locations.get(2), 2, true);
-        Map<Integer, Weather> wwoForecast = new Provider(new WorldWeatherOnlineStrategy())
-                .getHourlyWeather(locations.get(2), 2, true);
-        Map<Integer, Weather> sinForecast = new Provider(new SinoptikUaStrategy())
-                .getHourlyWeather(locations.get(2), 2, true);*/
-//        Provider[] providers = new Provider[3];
-//        providers[0] = new Provider(new SinoptikUaStrategy());
-//        providers[1] = new Provider(new GismeteoUaStrategy());
-//        providers[2] = new Provider(new WorldWeatherOnlineStrategy());
-
-
         View frame = new SwingFrameView();
-
         frame.init(providers, locations, isUa);
-
-        Model model = new Model(new SwingFrameView(), providers);
-        model.refreshWeatherParameters(locations.get(0), 0, isUa);
+        Model model = new Model(frame, providers);
         frame.setController(new Controller(model));
-
-        System.out.println();
 
     }
 
@@ -83,8 +65,8 @@ public class WeatherChecker {
                 }
             }
 
-        } catch (IOException e) {
-            // TODO - add to log
+        } catch (IOException ignore) {
+            // Ignore, because users do not need messages of the program.
         }
 
         locations = Location.getLocations("resources/locations.data");

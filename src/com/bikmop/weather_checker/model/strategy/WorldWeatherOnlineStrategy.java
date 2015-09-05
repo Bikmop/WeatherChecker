@@ -94,7 +94,7 @@ public class WorldWeatherOnlineStrategy extends Strategy {
 
 
             } catch (IOException ignore) {
-                // TODO - add to log
+                // Ignore, because users do not need messages of the program.
             }
 
         }
@@ -109,7 +109,5 @@ public class WorldWeatherOnlineStrategy extends Strategy {
         connection.referrer("https://www.google.com.ua/");
         return connection.get();
     }
-
-
 }
 

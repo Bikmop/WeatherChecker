@@ -123,7 +123,7 @@ public class GismeteoUaStrategy extends Strategy {
             }
 
         } catch (IOException ignore) {
-            // TODO - add to log
+            // Ignore, because users do not need messages of the program.
         }
 
         return hourlyWeather;
