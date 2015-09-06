@@ -891,7 +891,7 @@ public class SwingFrameView extends JFrame implements View {
         table.setValueAt("", 2, 0);
 
         // Clear cursor selection
-        table.changeSelection(9, 0, false, false);
+        table.changeSelection(0, 9, false, false);
 
         clickedLinks.clear();
     }
