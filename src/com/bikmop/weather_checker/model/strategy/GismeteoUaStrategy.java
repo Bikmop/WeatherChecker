@@ -16,6 +16,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
+
+/** Strategy implementation for provider: http://www.gismeteo.ua */
 public class GismeteoUaStrategy extends Strategy {
     /** Examples of references forecast.
      *  http://www.gismeteo.ua/weather-chernihiv-4923/hourly/

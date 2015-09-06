@@ -8,7 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
-/** Abstract class for Strategy pattern to get weather forecast from different sources */
+/** Abstract class for Strategy pattern to get weather forecast from different weather-providers */
 public abstract class Strategy {
 
     // Path to directory with strategy files (weather pictures, etc)

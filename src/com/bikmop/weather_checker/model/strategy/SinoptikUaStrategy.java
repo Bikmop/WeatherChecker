@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
+/** Strategy implementation for provider: https://sinoptik.ua */
 public class SinoptikUaStrategy extends Strategy {
     /** Examples of references forecast (contains cyrillic symbols).
      *  https://ua.sinoptik.ua/%D0%BF%D0%BE%D0%B3%D0%BE%D0%B4%D0%B0-%D0%BA%D0%B8%D1%97%D0%B2/2015-08-30

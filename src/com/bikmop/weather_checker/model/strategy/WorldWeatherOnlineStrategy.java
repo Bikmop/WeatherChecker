@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
+/** Strategy implementation for provider: http://www.worldweatheronline.com */
 public class WorldWeatherOnlineStrategy extends Strategy {
     /** Examples of references forecast.
      *  http://www.worldweatheronline.com/Chernihiv-weather/Chernihivska-Oblast/UA.aspx?day=20&tp=1

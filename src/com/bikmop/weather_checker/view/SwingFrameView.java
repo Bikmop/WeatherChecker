@@ -120,6 +120,7 @@ public class SwingFrameView extends JFrame implements View {
 
 
     @Override
+    /** Refresh view with new data */
     public void update(List<Map<Integer, Weather>> forecasts) {
         fillTable(mainTable, forecasts);
     }

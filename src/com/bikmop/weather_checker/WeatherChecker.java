@@ -8,7 +8,6 @@ import com.bikmop.weather_checker.model.strategy.GismeteoUaStrategy;
 import com.bikmop.weather_checker.model.strategy.Provider;
 import com.bikmop.weather_checker.model.strategy.SinoptikUaStrategy;
 import com.bikmop.weather_checker.model.strategy.WorldWeatherOnlineStrategy;
-import com.bikmop.weather_checker.weather.Weather;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -16,13 +15,36 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+/** WeatherChecker
+ * Program to get weather-forecasts from different web-site providers and show it in one JFrame.
+ * Using:
+ *      org.jsoup.Jsoup - to parse html-pages of weather forecasts
+ *      java.util.concurrent - ThreadPool with Callable-tasks to get forecasts at the same time
+ *      javax.swing, java.awt - GUI
+ *      Model-View-Controller - program based pattern
+ *      Strategy pattern - weather-provider selection
+ *
+ * Designed to be easily extended with new weather forecast providers.
+ *
+ * Current capabilities:
+ * - Three different providers of weather forecast (two are the most popular in Ukraine and one is international site):
+ *      http://www.gismeteo.ua
+ *      https://sinoptik.ua
+ *      http://www.worldweatheronline.com
+ *
+ * - One day (each three hours) of forecast on the frame. From today to +6 days.
+ * - Ukrainian and Russian languages of interface. Fast switching, no need to restart the program.
+ * - The most part of interface data is stored in *.data and java-properties files.
+ * - User can edit data-files to add new or remove geographical locations, change the names of the fields in the GUI,
+ *   change providers order, etc.
+ */
 public class WeatherChecker {
     public static boolean isUa = true;
     public static List<Provider> providers = new ArrayList<>();
     public static List<Location> locations;
 
+    /** Main */
     public static void main(String[] args) {
 
         // Initialize fields of class (get from *.data files)
