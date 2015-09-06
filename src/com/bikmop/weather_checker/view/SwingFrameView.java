@@ -175,13 +175,13 @@ public class SwingFrameView extends JFrame implements View {
                 cellComponent.setFont(new Font("", Font.BOLD, 13));
                 if (row == 0) {
                     // Location properties
-                    cellComponent.setFont(new Font("Tahoma", Font.ITALIC + Font.BOLD, 18));
+                    cellComponent.setFont(new Font("Tahoma", Font.ITALIC + Font.BOLD, 14));
                 }
             }
             if (row == 1) {
                 if (column == 0) {
                     // Date
-                    cellComponent.setFont(new Font("", Font.BOLD, 17));
+                    cellComponent.setFont(new Font("", Font.BOLD, 14));
                 } else {
                     // Times
                     cellComponent.setFont(new Font("", Font.BOLD, 14));
@@ -189,7 +189,7 @@ public class SwingFrameView extends JFrame implements View {
             }
             if (row == 2 && column == 0) {
                 // Day of week
-                cellComponent.setFont(new Font("", Font.BOLD, 17));
+                cellComponent.setFont(new Font("", Font.BOLD, 14));
             }
 
             // Background colors
@@ -356,9 +356,9 @@ public class SwingFrameView extends JFrame implements View {
         for (int i = 0; i < table.getRowCount(); i++) {
             table.setRowHeight(i, 17);
         }
-        table.setRowHeight(0, 23);
-        table.setRowHeight(1, 23);
-        table.setRowHeight(2, 30);
+        table.setRowHeight(0, 20);
+        table.setRowHeight(1, 20);
+        table.setRowHeight(2, 20);
 
         currentRaw = 3;
         int currentProp = 0;
@@ -889,6 +889,9 @@ public class SwingFrameView extends JFrame implements View {
         table.setValueAt("", 0, 0);
         table.setValueAt("", 1, 0);
         table.setValueAt("", 2, 0);
+
+        // Clear cursor selection
+        table.changeSelection(9, 0, false, false);
 
         clickedLinks.clear();
     }
