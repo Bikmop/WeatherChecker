@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/resources/init.data" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/resources/locations.data" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/com/bikmop/weather_checker/WeatherChecker.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/com/bikmop/weather_checker/model/Model.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/com/bikmop/weather_checker/model/strategy/GismeteoUaStrategy.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/com/bikmop/weather_checker/model/strategy/Provider.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/com/bikmop/weather_checker/model/strategy/SinoptikUaStrategy.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/com/bikmop/weather_checker/model/strategy/Strategy.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/com/bikmop/weather_checker/model/strategy/WorldWeatherOnlineStrategy.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/com/bikmop/weather_checker/view/SwingFrameView.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/com/bikmop/weather_checker/view/View.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/com/bikmop/weather_checker/weather/Location.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/com/bikmop/weather_checker/weather/PictureWeather.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/com/bikmop/weather_checker/weather/Precipitation.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/com/bikmop/weather_checker/weather/Weather.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/com/bikmop/weather_checker/weather/Wind.java" charset="UTF-8" />
+  </component>
+</project>
