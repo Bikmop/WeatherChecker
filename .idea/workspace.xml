@@ -7,7 +7,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5bb38e13-46d7-43a2-875c-8bdcb1006bb7" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="WeatherChecker.iws" />
@@ -760,7 +759,7 @@
       <workItem from="1443171860763" duration="761000" />
       <workItem from="1443300884264" duration="371000" />
       <workItem from="1444341006244" duration="3963000" />
-      <workItem from="1444379920070" duration="13453000" />
+      <workItem from="1444379920070" duration="13507000" />
     </task>
     <task id="LOCAL-00001" summary="Create Weather-classes and a part of Strategy-classes">
       <created>1440804241946</created>
@@ -888,11 +887,17 @@
       <option name="project" value="LOCAL" />
       <updated>1444415048121</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="JAR">
+      <created>1444415357285</created>
+      <option name="number" value="00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1444415357285</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="247280000" />
+    <option name="totallyTimeSpent" value="247334000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -965,7 +970,8 @@
     <MESSAGE value="Add .idea/ and JSoup files to repository. Necessary to open downloaded from Github project in IDEA." />
     <MESSAGE value="Fixed bug with negative temperature for Gismeteo source, etc." />
     <MESSAGE value="Before make JAR" />
-    <option name="LAST_COMMIT_MESSAGE" value="Before make JAR" />
+    <MESSAGE value="JAR" />
+    <option name="LAST_COMMIT_MESSAGE" value="JAR" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
