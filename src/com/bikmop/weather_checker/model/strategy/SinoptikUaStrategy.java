@@ -120,7 +120,7 @@ public class SinoptikUaStrategy extends Strategy {
                 }
             }
 
-        } catch (IOException ignore) {
+        } catch (IOException | NumberFormatException ignore) {
             // Ignore, because users do not need messages of the program.
         }
 

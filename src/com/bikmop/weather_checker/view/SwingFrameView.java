@@ -744,20 +744,29 @@ public class SwingFrameView extends JFrame implements View {
 
 
         // Show location and current date
-        if (forecasts.get(0).size() > 0) {
-            Weather weatherTmp = forecasts.get(0).entrySet().iterator().next().getValue();  // Get some Weather from forecast
-            String location;
-            Date day = weatherTmp.getDateTime();
-            if (isUa) {
-                location = weatherTmp.getLocation().getNameUa() + ":";
-                table.setValueAt(new SimpleDateFormat("dd MMMM", new Locale("uk","UA")).format(day), 1, 0);
-                table.setValueAt(new SimpleDateFormat("EEEE", new Locale("uk","UA")).format(day), 2, 0);
-            } else {
-                location = weatherTmp.getLocation().getNameRu() + ":";
-                table.setValueAt(new SimpleDateFormat("dd MMMM", new Locale("ru","RU")).format(day), 1, 0);
-                table.setValueAt(new SimpleDateFormat("EEEE", new Locale("ru","RU")).format(day), 2, 0);
+        if (forecasts.size() > 0) {
+            Weather weatherTmp = null;
+            for (Map<Integer, Weather> forecast : forecasts) {     // Find date and place
+                if (forecast.size() > 0) {
+                    weatherTmp = forecast.entrySet().iterator().next().getValue();
+                    if (weatherTmp.getDateTime() != null && weatherTmp.getLocation() != null)
+                        break;
+                }
             }
-            table.setValueAt(location, 0, 0);
+            if (weatherTmp != null) {
+                String location;
+                Date day = weatherTmp.getDateTime();
+                if (isUa) {
+                    location = weatherTmp.getLocation().getNameUa() + ":";
+                    table.setValueAt(new SimpleDateFormat("dd MMMM", new Locale("uk","UA")).format(day), 1, 0);
+                    table.setValueAt(new SimpleDateFormat("EEEE", new Locale("uk","UA")).format(day), 2, 0);
+                } else {
+                    location = weatherTmp.getLocation().getNameRu() + ":";
+                    table.setValueAt(new SimpleDateFormat("dd MMMM", new Locale("ru","RU")).format(day), 1, 0);
+                    table.setValueAt(new SimpleDateFormat("EEEE", new Locale("ru","RU")).format(day), 2, 0);
+                }
+                table.setValueAt(location, 0, 0);
+            }
         }
 
         // Feel table

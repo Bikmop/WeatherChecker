@@ -107,8 +107,23 @@ public class GismeteoUaStrategy extends Strategy {
                         RESOURCES_DIRECTORY + tmpPartsURL[tmpPartsURL.length - 1]));
 
                 Elements temperatures = elements.get(i).getElementsByAttributeValue("class", "value m_temp c");
-                tmpWeather.setTemperature(Integer.parseInt(temperatures.get(0).getElementsByAttributeValue("class", "value m_temp c").text()));
-                tmpWeather.setTempFeel(Integer.parseInt(temperatures.get(1).getElementsByAttributeValue("class", "value m_temp c").text()));
+
+                // Gismeteo-site uses as minus '\u2212' symbol
+                String s = temperatures.get(0).getElementsByAttributeValue("class", "value m_temp c").text();
+                int temperature;
+                if (s.charAt(0) == '\u2212') {
+                    temperature = -Integer.parseInt(s.substring(1));
+                } else {
+                    temperature = Integer.parseInt(s);
+                }
+                tmpWeather.setTemperature(temperature);
+                s = temperatures.get(1).getElementsByAttributeValue("class", "value m_temp c").text();
+                if (s.charAt(0) == '\u2212') {
+                    temperature = -Integer.parseInt(s.substring(1));
+                } else {
+                    temperature = Integer.parseInt(s);
+                }
+                tmpWeather.setTempFeel(temperature);
 
                 tmpWeather.setPressure(Integer.parseInt(elements.get(i).getElementsByAttributeValue("class", "value m_press torr").text()));
 
@@ -124,7 +139,7 @@ public class GismeteoUaStrategy extends Strategy {
 
             }
 
-        } catch (IOException ignore) {
+        } catch (IOException | NumberFormatException ignore) {
             // Ignore, because users do not need messages of the program.
         }
 
