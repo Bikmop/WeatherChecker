@@ -759,7 +759,7 @@
       <workItem from="1443171860763" duration="761000" />
       <workItem from="1443300884264" duration="371000" />
       <workItem from="1444341006244" duration="3963000" />
-      <workItem from="1444379920070" duration="13507000" />
+      <workItem from="1444379920070" duration="13532000" />
     </task>
     <task id="LOCAL-00001" summary="Create Weather-classes and a part of Strategy-classes">
       <created>1440804241946</created>
@@ -893,11 +893,17 @@
       <option name="project" value="LOCAL" />
       <updated>1444415357285</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="JAR">
+      <created>1444415392991</created>
+      <option name="number" value="00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1444415392991</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="247334000" />
+    <option name="totallyTimeSpent" value="247359000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
