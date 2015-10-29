@@ -282,7 +282,8 @@ public class SwingFrameView extends JFrame implements View {
             rowsNumber += properties.size() + 1;
         }
 
-        Object[] columnNames = {"", "00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00"};
+//        Object[] columnNames = {"", "00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00"};  //Summer time
+        Object[] columnNames = {"", "02:00", "05:00", "08:00", "11:00", "14:00", "17:00", "20:00", "23:00"};    //Winter time
 
         // Fill default cells data before table creation
         Object[][] tableData = new Object[rowsNumber][9];
@@ -292,14 +293,26 @@ public class SwingFrameView extends JFrame implements View {
             }
         }
         // Times string for View
-        tableData[1][1] = "00:00";
+
+        //Summer time
+/*        tableData[1][1] = "00:00";
         tableData[1][2] = "03:00";
         tableData[1][3] = "06:00";
         tableData[1][4] = "09:00";
         tableData[1][5] = "12:00";
         tableData[1][6] = "15:00";
         tableData[1][7] = "18:00";
-        tableData[1][8] = "21:00";
+        tableData[1][8] = "21:00";*/
+
+        //Winter time
+        tableData[1][1] = "02:00";
+        tableData[1][2] = "05:00";
+        tableData[1][3] = "08:00";
+        tableData[1][4] = "11:00";
+        tableData[1][5] = "14:00";
+        tableData[1][6] = "17:00";
+        tableData[1][7] = "20:00";
+        tableData[1][8] = "23:00";
 
         // Fill first column with Weather parameter names depends of Provider
         int currentRaw = 3;
@@ -778,7 +791,8 @@ public class SwingFrameView extends JFrame implements View {
             if (tmpRawName.getProperty("picture.height") != null) {
                 for (Map.Entry<Integer, Weather> entry : mapTmp.entrySet()) {
                     int currentColumn = entry.getKey() / 3 + 1;
-                    if (entry.getKey() % 3 ==0) {
+//                    if (entry.getKey() % 3 ==0) {         //Summer time
+                    if ((entry.getKey()-2) % 3 ==0) {       //Winter time
                         picPath.get(currentPropertyRawName)[currentColumn - 1] =
                                 entry.getValue().getPictureWeather().getWeatherImage();
                         toolTipText[currentRaw][currentColumn] = entry.getValue().getPictureWeather().getWeatherDescription();
@@ -791,7 +805,8 @@ public class SwingFrameView extends JFrame implements View {
             if (tmpRawName.getProperty("temperature") != null) {
                 for (Map.Entry<Integer, Weather> entry : mapTmp.entrySet()) {
                     int currentColumn = entry.getKey() / 3 + 1;
-                    if (entry.getKey() % 3 ==0) {       // Need to get only 0:00, 3:00, 6:00, 9:00, etc.
+//                    if (entry.getKey() % 3 ==0) {       // Need to get only 0:00, 3:00, 6:00, 9:00, etc.  //Summer time
+                    if ((entry.getKey()-2) % 3 ==0) {       //Winter time
                         int temperature = entry.getValue().getTemperature();
                         if (temperature > 0) {
                             table.setValueAt("+" + temperature, currentRaw, currentColumn);
@@ -806,7 +821,8 @@ public class SwingFrameView extends JFrame implements View {
             if (tmpRawName.getProperty("feel") != null) {
                 for (Map.Entry<Integer, Weather> entry : mapTmp.entrySet()) {
                     int currentColumn = entry.getKey() / 3 + 1;
-                    if (entry.getKey() % 3 ==0) {
+//                    if (entry.getKey() % 3 ==0) {         //Summer time
+                    if ((entry.getKey()-2) % 3 ==0) {       //Winter time
                         int feel = entry.getValue().getTempFeel();
                         if (feel > 0) {
                             table.setValueAt("+" + feel, currentRaw, currentColumn);
@@ -821,7 +837,8 @@ public class SwingFrameView extends JFrame implements View {
             if (tmpRawName.getProperty("precipitation.probability") != null) {
                 for (Map.Entry<Integer, Weather> entry : mapTmp.entrySet()) {
                     int currentColumn = entry.getKey() / 3 + 1;
-                    if (entry.getKey() % 3 ==0) {
+//                    if (entry.getKey() % 3 ==0) {         //Summer time
+                    if ((entry.getKey()-2) % 3 ==0) {       //Winter time
                         int precipitationProb = entry.getValue().getPrecipitation().getProbability();
                         if (precipitationProb != -1000) {
                             table.setValueAt(precipitationProb, currentRaw, currentColumn);
@@ -836,7 +853,8 @@ public class SwingFrameView extends JFrame implements View {
             if (tmpRawName.getProperty("precipitation.description") != null) {
                 for (Map.Entry<Integer, Weather> entry : mapTmp.entrySet()) {
                     int currentColumn = entry.getKey() / 3 + 1;
-                    if (entry.getKey() % 3 ==0) {
+//                    if (entry.getKey() % 3 ==0) {         //Summer time
+                    if ((entry.getKey()-2) % 3 ==0) {       //Winter time
                         table.setValueAt(entry.getValue().getPrecipitation().getDescription(), currentRaw, currentColumn);
                     }
                 }
@@ -846,7 +864,8 @@ public class SwingFrameView extends JFrame implements View {
             if (tmpRawName.getProperty("wind") != null) {
                 for (Map.Entry<Integer, Weather> entry : mapTmp.entrySet()) {
                     int currentColumn = entry.getKey() / 3 + 1;
-                    if (entry.getKey() % 3 ==0) {
+//                    if (entry.getKey() % 3 ==0) {           //Summer time
+                    if ((entry.getKey()-2) % 3 ==0) {       //Winter time
                         table.setValueAt(entry.getValue().getWind().getPower(), currentRaw, currentColumn);
                         toolTipText[currentRaw][currentColumn] = entry.getValue().getWind().getDirection();
                     }
@@ -857,7 +876,8 @@ public class SwingFrameView extends JFrame implements View {
             if (tmpRawName.getProperty("humidity") != null) {
                 for (Map.Entry<Integer, Weather> entry : mapTmp.entrySet()) {
                     int currentColumn = entry.getKey() / 3 + 1;
-                    if (entry.getKey() % 3 ==0) {
+//                    if (entry.getKey() % 3 ==0) {         //Summer time
+                    if ((entry.getKey()-2) % 3 ==0) {       //Winter time
                         table.setValueAt(entry.getValue().getHumidity(), currentRaw, currentColumn);
                     }
                 }
@@ -867,7 +887,8 @@ public class SwingFrameView extends JFrame implements View {
             if (tmpRawName.getProperty("pressure") != null) {
                 for (Map.Entry<Integer, Weather> entry : mapTmp.entrySet()) {
                     int currentColumn = entry.getKey() / 3 + 1;
-                    if (entry.getKey() % 3 ==0) {
+//                    if (entry.getKey() % 3 ==0) {           //Summer time
+                    if ((entry.getKey()-2) % 3 ==0) {       //Winter time
                         table.setValueAt(entry.getValue().getPressure(), currentRaw, currentColumn);
                     }
                 }
